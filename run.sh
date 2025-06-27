@@ -9,7 +9,12 @@ fi
 
 set -x
 
-[ -v INIT ] || INIT=
+vfio=disk_vfio
+iommufd=disk_iommufd
+dd if=/dev/random of=$vfio bs=512 count=1 status=none
+dd if=/dev/random of=$iommufd bs=1024 count=1 status=none
+
+[ -v INIT ] || INIT="/host/host.sh /host/$vfio /host/$iommufd" \
 
 "$@" \
 -nodefaults \
@@ -25,4 +30,10 @@ set -x
 -kernel ./out/Image.gz \
 -drive format=raw,file=./out/host.ext4,if=virtio \
 -append "nokaslr root=/dev/vda rw init=/init -- $INIT" \
--virtfs local,path=$(pwd)/,mount_tag=host,security_model=mapped,readonly=off
+-virtfs local,path=$(pwd)/,mount_tag=host,security_model=mapped,readonly=off \
+-drive file=$vfio,if=none,id=vfio,format=raw \
+-device nvme,serial=vfio,drive=vfio \
+-drive file=$iommufd,if=none,id=iommufd,format=raw \
+-device nvme,serial=iommufd,drive=iommufd
+
+rm $vfio $iommufd
