@@ -1,0 +1,44 @@
+From 2235e01874d2b51e32650b2326c94ae2285c554a Mon Sep 17 00:00:00 2001
+From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Date: Fri, 14 Jul 2023 10:54:43 +0100
+Subject: [PATCH] TMP: fix(qemu): Support lower PMU versions
+
+Although RME mandates v3p7, QEMU has v3p5 at the moment. Until we
+implement the p7 extension, which provides counter isolation for EL3,
+allow p5.
+
+Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Change-Id: Id1dd30486f203187e3f882c7495116b743d3883a
+---
+ lib/arch/include/arch.h | 1 +
+ runtime/rmi/feature.c   | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/lib/arch/include/arch.h b/lib/arch/include/arch.h
+index cecdf2a5..fc64365e 100644
+--- a/lib/arch/include/arch.h
++++ b/lib/arch/include/arch.h
+@@ -493,6 +493,7 @@
+ #define ID_AA64DFR0_EL1_PMUVer_WIDTH		UL(4)
+ 
+ /* Performance Monitors Extension version */
++#define ID_AA64DFR0_EL1_PMUv3p5			UL(5)
+ #define ID_AA64DFR0_EL1_PMUv3p7			UL(7)
+ #define ID_AA64DFR0_EL1_PMUv3p8			UL(8)
+ #define ID_AA64DFR0_EL1_PMUv3p9			UL(9)
+diff --git a/runtime/rmi/feature.c b/runtime/rmi/feature.c
+index 5468f137..52487c0d 100644
+--- a/runtime/rmi/feature.c
++++ b/runtime/rmi/feature.c
+@@ -35,7 +35,7 @@ unsigned long get_feature_register_0(void)
+ 						RMI_FEATURE_TRUE);
+ 
+ 	/* RMM supports PMUv3p7+ */
+-	assert(read_pmu_version() >= ID_AA64DFR0_EL1_PMUv3p7);
++	assert(read_pmu_version() >= ID_AA64DFR0_EL1_PMUv3p5);
+ 
+ 	/* Set support for PMUv3 */
+ 	feat_reg0 |= INPLACE(RMI_FEATURE_REGISTER_0_PMU_EN,
+-- 
+GitLab
+
