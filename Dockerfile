@@ -20,6 +20,12 @@ RUN apt update && apt install -y \
 e2fsprogs libarchive13t64 locales-all
 RUN apt update && apt install -y \
 libgnutls28-dev
+RUN apt update && apt install -y cmake python3-pyelftools
+RUN apt update && \
+apt install -y libbrotli-dev uuid-dev python-is-python3 acpica-tools
+RUN dpkg --add-architecture arm64 && \
+    apt update && apt install -y libfdt-dev:arm64
+
 RUN apt update && apt install -y ccache
 RUN apt update && apt install -y clang-tools
 RUN ln -s /usr/bin/intercept-build-* /usr/bin/intercept-build
