@@ -12,8 +12,8 @@ clone()
 {
     ./clone.sh \
         linux \
-        https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git \
-        v6.17 \
+        https://gitlab.arm.com/linux-arm/linux-cca \
+        cca-host/v9 \
         patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
 }
 
@@ -34,6 +34,9 @@ build()
     scripts/config --enable IOMMUFD
     scripts/config --enable VFIO_DEVICE_CDEV
     scripts/config --enable ARM_SMMU_V3_IOMMUFD
+    # # Enable the configfs-tsm driver that provides the attestation interface
+    scripts/config --enable VIRT_DRIVERS
+    scripts/config --enable ARM_CCA_GUEST
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config
@@ -58,7 +61,8 @@ build()
 output()
 {
     mkdir -p out
-    rsync ./linux/arch/arm64/boot/Image.gz out/
+    # kvmtool is not able to boot a compressed kernel
+    rsync ./linux/arch/arm64/boot/Image out/
 }
 
 clone
