@@ -1,0 +1,26 @@
+From 6e08095c44091d899e0bfc292f08497998d566d0 Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@linaro.org>
+Date: Tue, 10 Mar 2026 12:16:11 -0700
+Subject: [PATCH] silentify error on smccc features enabled
+
+---
+ services/arm_arch_svc/arm_arch_svc_setup.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/services/arm_arch_svc/arm_arch_svc_setup.c b/services/arm_arch_svc/arm_arch_svc_setup.c
+index a2ff69a..86bb983 100644
+--- a/services/arm_arch_svc/arm_arch_svc_setup.c
++++ b/services/arm_arch_svc/arm_arch_svc_setup.c
+@@ -247,8 +247,7 @@ static uintptr_t smccc_arch_feature_availability(u_register_t reg,
+ 	 * bitmask macros are not updated.
+ 	 */
+ 	if (ENABLE_ASSERTIONS && check != 0) {
+-		ERROR("Unexpected bits 0x%lx were set in register %lx!\n", check, reg);
+-		assert(0);
++		WARN("Unexpected bits 0x%lx were set in register %lx!\n", check, reg);
+ 	}
+
+ 	SMC_RET2(handle, SMC_ARCH_CALL_SUCCESS, bitmask);
+--
+2.47.3
+

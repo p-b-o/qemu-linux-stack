@@ -1,0 +1,28 @@
+From ff0fa3754bb18fc2cf07d09c8d4d2583452d62d2 Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@linaro.org>
+Date: Mon, 12 Jan 2026 11:48:08 -0800
+Subject: [PATCH] tf-rmm: silence Unhandled read/write regs info
+
+---
+ runtime/core/sysregs.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/runtime/core/sysregs.c b/runtime/core/sysregs.c
+index 55a5f07..2f185a8 100644
+--- a/runtime/core/sysregs.c
++++ b/runtime/core/sysregs.c
+@@ -354,9 +354,11 @@ bool handle_sysreg_access_trap(struct rec *rec, struct rmi_rec_exit *rec_exit,
+ 	crm = (unsigned int)EXTRACT(ESR_EL2_SYSREG_TRAP_CRM, sysreg);
+ 	op2 = (unsigned int)EXTRACT(ESR_EL2_SYSREG_TRAP_OP2, sysreg);
+ 
++    /*
+ 	INFO("Unhandled %s S%u_%u_C%u_C%u_%u\n",
+ 		ESR_EL2_SYSREG_IS_WRITE(esr) ? "write" : "read",
+ 		op0, op1, crn, crm, op2);
++    */
+ 
+ 	advance_pc();
+ 	return true;
+-- 
+2.47.3
+
