@@ -31,9 +31,13 @@ build()
     pushd $(readlink -f arm-trusted-firmware)
     # tf-a is not very good to handle config changes, so simply clean it
     git clean -ffdx
+    # boot with edk2, as uboot does not seem to work with rme
+    # https://trustedfirmware-a.readthedocs.io/en/latest/components/realm-management-extension.html#building-and-running-tf-a-with-rme
     intercept-build --append \
     make PLAT=qemu QEMU_USE_GIC_DRIVER=QEMU_GICV3 \
-         BL33=../u-boot/u-boot.bin \
+         BL33=../edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/FV/QEMU_EFI.fd \
+         ENABLE_RME=1 \
+         RMM=../tf-rmm/build/Debug/rmm.img \
          LOG_LEVEL=40 \
          DEBUG=1 \
          all fip -j$(nproc)
