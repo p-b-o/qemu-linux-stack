@@ -11,17 +11,27 @@ target modules load --file arm-trusted-firmware/build/qemu/debug/bl2/bl2.elf --s
 target modules add arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf
 target modules load --file arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf --slide 0x0
 
-# uboot map offset is given by TF-A during the boot:
-# INFO:    BL31: Preparing for EL3 exit to normal world
-# INFO:    Entry point address = 0x60000000
-target modules add u-boot/u-boot
-target modules load --file u-boot/u-boot --slide 0x60000000
+# For rmm, we need to find loaded address (chosen by TF-A) + offset (build)
+# Check for RMM address loaded by TF-A:
+# $ ./run.sh qemu-system-aarch64 | grep 'Reserved RMM memory'
+# Reserved RMM memory [0x40100000, 0x418fffff] in Device tree
+# Check for offset in RMM image:
+# ./build_tf_rmm.sh |& grep 'offset of the RMM core'
+# INFO: The offset of the RMM core is 393216 (0x60000) bytes from start of packaged bin.
+target modules add tf-rmm/build/Debug/rmm.elf
+target modules load --file tf-rmm/build/Debug/rmm.elf --slide 0x40160000
 
-# https://github.com/u-boot/u-boot/blob/master/doc/README.arm-relocation
-# => bdinfo
-# relocaddr   = 0x000000023f6b6000
-target modules add u-boot/u-boot.relocated
-target modules load --file u-boot/u-boot.relocated --slide 0x000000023f6b6000
+# EDK2 directly prints gdb add-symbol-file commands with .text address.
+# only DxeCore is added here
+# lldb slide is the image base, i.e. add-symbol-file address - .text address
+# (.text address is the PE header size, SizeOfHeaders).
+# $ ./run.sh qemu-system-aarch64 | grep 'DxeCore.dll'
+# add-symbol-file .../DxeCore.dll 0xBF2BC000
+# $ readelf -SW .../DxeCore.dll | grep .text
+# [ 1] .text  PROGBITS  0000000000001000 ...
+# -> slide = 0xBF2BC000 - 0x1000 = 0xBF2BB000
+target modules add edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/AARCH64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll
+target modules load --file edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/AARCH64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll --slide 0xBF2BB000
 
 target modules add linux/vmlinux
 target modules load --file linux/vmlinux --slide 0x0
@@ -29,7 +39,8 @@ target modules load --file linux/vmlinux --slide 0x0
 b bl1.elf`bl1_main
 b bl2.elf`bl2_main
 b bl31.elf`bl31_main
-b u-boot`board_init_f
+b rmm.elf`rmm_main
+b DxeCore.dll`DxeMain
 b vmlinux`start_kernel
 b vmlinux`sys_off_notify
 
