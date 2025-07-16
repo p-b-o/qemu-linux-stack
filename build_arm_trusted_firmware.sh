@@ -13,7 +13,7 @@ clone()
     rm -f arm-trusted-firmware
     url=https://github.com/ARM-software/arm-trusted-firmware
     version=v2.13.0
-    src=arm-trusted-firmware-$version-patch-tcr2-sctlr2-pie-gcs
+    src=arm-trusted-firmware-$version-patch-tcr2-sctlr2-pie-gcs-release
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
@@ -37,12 +37,11 @@ build()
     make PLAT=qemu QEMU_USE_GIC_DRIVER=QEMU_GICV3 \
          BL33=../edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/FV/QEMU_EFI.fd \
          ENABLE_RME=1 \
-         RMM=../tf-rmm/build/Debug/rmm.img \
+         RMM=../tf-rmm/build/Release/rmm.img \
          LOG_LEVEL=40 \
-         DEBUG=1 \
          all fip -j$(nproc)
-    dd if=build/qemu/debug/bl1.bin of=flash.bin bs=4096 conv=notrunc
-    dd if=build/qemu/debug/fip.bin of=flash.bin seek=64 bs=4096 conv=notrunc
+    dd if=build/qemu/release/bl1.bin of=flash.bin bs=4096 conv=notrunc
+    dd if=build/qemu/release/fip.bin of=flash.bin seek=64 bs=4096 conv=notrunc
     sed -i compile_commands.json -e 's/"cc"/"aarch64-linux-gnu-gcc"/'
     popd
 }
