@@ -3,11 +3,11 @@ target remote :1234
 
 source ./gdb.py
 
-add-symbol-file ./arm-trusted-firmware/build/qemu/debug/bl1/bl1.elf
+add-symbol-file ./arm-trusted-firmware/build/qemu/release/bl1/bl1.elf
 b bl1_main
-add-symbol-file ./arm-trusted-firmware/build/qemu/debug/bl2/bl2.elf
+add-symbol-file ./arm-trusted-firmware/build/qemu/release/bl2/bl2.elf
 b bl2_main
-add-symbol-file ./arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf
+add-symbol-file ./arm-trusted-firmware/build/qemu/release/bl31/bl31.elf
 b bl31_main
 
 # For rmm, we need to find loaded address (chosen by TF-A) + offset (build)
@@ -16,8 +16,8 @@ b bl31_main
 # Reserved RMM memory [0x40100000, 0x418fffff] in Device tree
 # Check for offset in RMM image:
 # ./build_rmm.sh |& grep 'offset of the RMM core'
-# INFO: The offset of the RMM core is 393216 (0x60000) bytes from start of packaged bin.
-add-symbol-file ./tf-rmm/build/Debug/rmm.elf 0x40160000
+# 0x60000
+add-symbol-file ./tf-rmm/build/Release/rmm.elf 0x40160000
 b rmm_main
 
 # EDK2 directly prints add-symbol-file with expected offsets
