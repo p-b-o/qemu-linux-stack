@@ -1,0 +1,200 @@
+From c92f1b603677a5fb1e5d393dd5ed18678bcc891e Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@oss.qualcomm.com>
+Date: Thu, 19 Nov 2026 04:42:34 +0000
+Subject: [PATCH] BaseTools/GenFw, MdePkg/BaseLib: don't embed build directory
+ in images
+
+GenFw embeds the full path of the input image (.dll) in the CodeView
+debug entry and in the export directory of the generated PE/COFF image.
+Similarly, SafeString.c uses __FILE__, which expands to an absolute path.
+
+As a result, the size of every module depends on the directory where
+edk2 was built, which changes the size of decompressed firmware volumes,
+and thus the address where DxeCore and other drivers are loaded.
+
+Strip WORKSPACE prefix from the image name embedded by GenFw, and use
+__FILE_NAME__ (when available) in SafeString.c, like DebugLib.h does.
+This makes images, and load addresses, independent of build directory.
+
+Signed-off-by: Pierrick Bouvier <pierrick.bouvier@oss.qualcomm.com>
+---
+ BaseTools/Source/C/GenFw/Elf32Convert.c |  6 +++---
+ BaseTools/Source/C/GenFw/Elf64Convert.c | 12 +++++------
+ BaseTools/Source/C/GenFw/ElfConvert.c   | 27 +++++++++++++++++++++++++
+ BaseTools/Source/C/GenFw/ElfConvert.h   |  1 +
+ MdePkg/Library/BaseLib/SafeString.c     |  8 +++++++-
+ 5 files changed, 44 insertions(+), 10 deletions(-)
+
+diff --git a/BaseTools/Source/C/GenFw/Elf32Convert.c b/BaseTools/Source/C/GenFw/Elf32Convert.c
+index 246497a..8a3d263 100644
+--- a/BaseTools/Source/C/GenFw/Elf32Convert.c
++++ b/BaseTools/Source/C/GenFw/Elf32Convert.c
+@@ -496,7 +496,7 @@ ScanSections32 (
+   }
+   mCoffOffset = mDebugOffset + sizeof(EFI_IMAGE_DEBUG_DIRECTORY_ENTRY) +
+                 sizeof(EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY) +
+-                strlen(mInImageName) + 1;
++                strlen(mInImageDebugName) + 1;
+ 
+   mCoffOffset = CoffAlign(mCoffOffset);
+   if (SectionCount == 0) {
+@@ -1124,7 +1124,7 @@ WriteDebug32 (
+   EFI_IMAGE_DEBUG_DIRECTORY_ENTRY     *Dir;
+   EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY *Nb10;
+ 
+-  Len = strlen(mInImageName) + 1;
++  Len = strlen(mInImageDebugName) + 1;
+ 
+   Dir = (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY*)(mCoffFile + mDebugOffset);
+   Dir->Type = EFI_IMAGE_DEBUG_TYPE_CODEVIEW;
+@@ -1134,7 +1134,7 @@ WriteDebug32 (
+ 
+   Nb10 = (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY*)(Dir + 1);
+   Nb10->Signature = CODEVIEW_SIGNATURE_NB10;
+-  strcpy ((char *)(Nb10 + 1), mInImageName);
++  strcpy ((char *)(Nb10 + 1), mInImageDebugName);
+ 
+ 
+   NtHdr = (EFI_IMAGE_OPTIONAL_HEADER_UNION *)(mCoffFile + mNtHdrOffset);
+diff --git a/BaseTools/Source/C/GenFw/Elf64Convert.c b/BaseTools/Source/C/GenFw/Elf64Convert.c
+index 6919e18..b947556 100644
+--- a/BaseTools/Source/C/GenFw/Elf64Convert.c
++++ b/BaseTools/Source/C/GenFw/Elf64Convert.c
+@@ -990,7 +990,7 @@ ScanSections64 (
+   }
+   mCoffOffset = mDebugOffset + sizeof(EFI_IMAGE_DEBUG_DIRECTORY_ENTRY) +
+                 sizeof(EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY) +
+-                strlen(mInImageName) + 1;
++                strlen(mInImageDebugName) + 1;
+ 
+   //
+   // Add more space in the .debug data region for the DllCharacteristicsEx
+@@ -1021,7 +1021,7 @@ ScanSections64 (
+     const UINT8 *SymName;
+ 
+     mExportOffset = mCoffOffset;
+-    mExportSize = sizeof(EFI_IMAGE_EXPORT_DIRECTORY) + strlen(mInImageName) + 1;
++    mExportSize = sizeof(EFI_IMAGE_EXPORT_DIRECTORY) + strlen(mInImageDebugName) + 1;
+ 
+     for (i = 0; i < mEhdr->e_shnum; i++) {
+ 
+@@ -2310,7 +2310,7 @@ WriteDebug64 (
+   EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY         *Nb10;
+   EFI_IMAGE_DEBUG_EX_DLLCHARACTERISTICS_ENTRY *DllEntry;
+ 
+-  Len = strlen(mInImageName) + 1;
++  Len = strlen(mInImageDebugName) + 1;
+ 
+   NtHdr = (EFI_IMAGE_OPTIONAL_HEADER_UNION *)(mCoffFile + mNtHdrOffset);
+   DataDir = &NtHdr->Pe32Plus.OptionalHeader.DataDirectory[EFI_IMAGE_DIRECTORY_ENTRY_DEBUG];
+@@ -2343,7 +2343,7 @@ WriteDebug64 (
+ 
+   Nb10 = (EFI_IMAGE_DEBUG_CODEVIEW_NB10_ENTRY*)(Dir + 1);
+   Nb10->Signature = CODEVIEW_SIGNATURE_NB10;
+-  strcpy ((char *)(Nb10 + 1), mInImageName);
++  strcpy ((char *)(Nb10 + 1), mInImageDebugName);
+ }
+ 
+ STATIC
+@@ -2400,13 +2400,13 @@ WriteExport64 (
+   ExportDir->AddressOfNameOrdinals = ExportDir->AddressOfNames + EFI_IMAGE_EXPORT_ADDR_SIZE * mExportSymNum;
+ 
+   FileNameOffset = ExportDir->AddressOfNameOrdinals + EFI_IMAGE_EXPORT_ORDINAL_SIZE * mExportSymNum;
+-  NameOffset = FileNameOffset + strlen(mInImageName) + 1;
++  NameOffset = FileNameOffset + strlen(mInImageDebugName) + 1;
+ 
+   // Write Input image Name RVA
+   ExportDir->Name = FileNameOffset;
+ 
+   // Write Input image Name
+-  strcpy((char *)(mCoffFile + FileNameOffset), mInImageName);
++  strcpy((char *)(mCoffFile + FileNameOffset), mInImageDebugName);
+ 
+   for (Index = 0; Index < mExportSymNum; Index++) {
+     //
+diff --git a/BaseTools/Source/C/GenFw/ElfConvert.c b/BaseTools/Source/C/GenFw/ElfConvert.c
+index d6d9feb..f4b41f1 100644
+--- a/BaseTools/Source/C/GenFw/ElfConvert.c
++++ b/BaseTools/Source/C/GenFw/ElfConvert.c
+@@ -30,6 +30,13 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
+ #include "Elf32Convert.h"
+ #include "Elf64Convert.h"
+ 
++//
++// Name of input image, as embedded in output image (debug entry, export
++// table). Path is made relative to WORKSPACE, so that output image does not
++// depend on the directory where it was built.
++//
++CHAR8 *mInImageDebugName = NULL;
++
+ //
+ // Result Coff file in memory.
+ //
+@@ -171,8 +178,28 @@ ConvertElf (
+ {
+   ELF_FUNCTION_TABLE              ElfFunctions;
+   UINT8                           EiClass;
++  CHAR8                           *Workspace;
++  size_t                          WorkspaceLen;
+ 
+   mFileBufferSize = *FileLength;
++
++  //
++  // Strip WORKSPACE from image name embedded in output.
++  //
++  mInImageDebugName = mInImageName;
++  Workspace = getenv ("WORKSPACE");
++  if (Workspace != NULL) {
++    WorkspaceLen = strlen (Workspace);
++    while (WorkspaceLen > 0 &&
++           (Workspace[WorkspaceLen - 1] == '/' || Workspace[WorkspaceLen - 1] == '\\')) {
++      WorkspaceLen--;
++    }
++    if (WorkspaceLen > 0 &&
++        strncmp (mInImageName, Workspace, WorkspaceLen) == 0 &&
++        (mInImageName[WorkspaceLen] == '/' || mInImageName[WorkspaceLen] == '\\')) {
++      mInImageDebugName = mInImageName + WorkspaceLen + 1;
++    }
++  }
+   //
+   // Determine ELF type and set function table pointer correctly.
+   //
+diff --git a/BaseTools/Source/C/GenFw/ElfConvert.h b/BaseTools/Source/C/GenFw/ElfConvert.h
+index 6ab4605..7e67ac2 100644
+--- a/BaseTools/Source/C/GenFw/ElfConvert.h
++++ b/BaseTools/Source/C/GenFw/ElfConvert.h
+@@ -19,6 +19,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
+ //
+ extern UINT32 mCoffOffset;
+ extern CHAR8  *mInImageName;
++extern CHAR8  *mInImageDebugName;
+ extern UINT32 mImageTimeStamp;
+ extern UINT8  *mCoffFile;
+ extern UINT32 mTableOffset;
+diff --git a/MdePkg/Library/BaseLib/SafeString.c b/MdePkg/Library/BaseLib/SafeString.c
+index 954d3f8..c76da50 100644
+--- a/MdePkg/Library/BaseLib/SafeString.c
++++ b/MdePkg/Library/BaseLib/SafeString.c
+@@ -12,12 +12,18 @@
+ 
+ #define ASCII_RSIZE_MAX  (PcdGet32 (PcdMaximumAsciiStringLength))
+ 
++#if defined (__FILE_NAME__)
++#define SAFE_STRING_FILE_NAME  __FILE_NAME__
++#else
++#define SAFE_STRING_FILE_NAME  __FILE__
++#endif
++
+ #define SAFE_STRING_CONSTRAINT_CHECK(Expression, Status)  \
+   do { \
+     if (!(Expression)) { \
+       DEBUG ((DEBUG_VERBOSE, \
+         "%a(%d) %a: SAFE_STRING_CONSTRAINT_CHECK(%a) failed.  Return %r\n", \
+-        __FILE__, DEBUG_LINE_NUMBER, __func__, DEBUG_EXPRESSION_STRING (Expression), Status)); \
++        SAFE_STRING_FILE_NAME, DEBUG_LINE_NUMBER, __func__, DEBUG_EXPRESSION_STRING (Expression), Status)); \
+       return Status; \
+     } \
+   } while (FALSE)
+-- 
+2.43.0
+

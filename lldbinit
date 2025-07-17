@@ -2,36 +2,36 @@ settings set interpreter.prompt-on-quit false
 
 gdb-remote localhost:1234
 
-target modules add arm-trusted-firmware/build/qemu/debug/bl1/bl1.elf
-target modules load --file arm-trusted-firmware/build/qemu/debug/bl1/bl1.elf --slide 0x0
+target modules add arm-trusted-firmware/build/qemu_sbsa/debug/bl1/bl1.elf
+target modules load --file arm-trusted-firmware/build/qemu_sbsa/debug/bl1/bl1.elf --slide 0x0
 
-target modules add arm-trusted-firmware/build/qemu/debug/bl2/bl2.elf
-target modules load --file arm-trusted-firmware/build/qemu/debug/bl2/bl2.elf --slide 0x0
+target modules add arm-trusted-firmware/build/qemu_sbsa/debug/bl2/bl2.elf
+target modules load --file arm-trusted-firmware/build/qemu_sbsa/debug/bl2/bl2.elf --slide 0x0
 
-target modules add arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf
-target modules load --file arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf --slide 0x0
+target modules add arm-trusted-firmware/build/qemu_sbsa/debug/bl31/bl31.elf
+target modules load --file arm-trusted-firmware/build/qemu_sbsa/debug/bl31/bl31.elf --slide 0x0
 
 # For rmm, we need to find loaded address (chosen by TF-A) + offset (build)
 # Check for RMM address loaded by TF-A:
 # $ ./run.sh qemu-system-aarch64 | grep 'Reserved RMM memory'
-# Reserved RMM memory [0x40100000, 0x418fffff] in Device tree
+# INFO:    Reserved RMM memory [0x10000000000, 0x10042ffffff] in Device tree
 # Check for offset in RMM image:
 # ./build_tf_rmm.sh |& grep 'offset of the RMM core'
 # INFO: The offset of the RMM core is 393216 (0x60000) bytes from start of packaged bin.
 target modules add tf-rmm/build/Debug/rmm.elf
-target modules load --file tf-rmm/build/Debug/rmm.elf --slide 0x40160000
+target modules load --file tf-rmm/build/Debug/rmm.elf --slide 0x10000060000
 
 # EDK2 directly prints gdb add-symbol-file commands with .text address.
 # only DxeCore is added here
 # lldb slide is the image base, i.e. add-symbol-file address - .text address
 # (.text address is the PE header size, SizeOfHeaders).
 # $ ./run.sh qemu-system-aarch64 | grep 'DxeCore.dll'
-# add-symbol-file .../DxeCore.dll 0xBF2BC000
+# add-symbol-file .../DxeCore.dll 0x1007F7CF000
 # $ readelf -SW .../DxeCore.dll | grep .text
 # [ 1] .text  PROGBITS  0000000000001000 ...
-# -> slide = 0xBF2BC000 - 0x1000 = 0xBF2BB000
-target modules add edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/AARCH64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll
-target modules load --file edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/AARCH64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll --slide 0xBF2BB000
+# -> slide = 0x1007F7CF000 - 0x1000 = 0x1007F7CE000
+target modules add edk2/Build/SbsaQemuRme/DEBUG_GCC5/AARCH64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll
+target modules load --file edk2/Build/SbsaQemuRme/DEBUG_GCC5/AARCH64/MdeModulePkg/Core/Dxe/DxeMain/DEBUG/DxeCore.dll --slide 0x1007F7CE000
 
 target modules add linux/vmlinux
 target modules load --file linux/vmlinux --slide 0x0
