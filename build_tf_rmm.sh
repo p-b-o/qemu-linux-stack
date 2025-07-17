@@ -13,7 +13,7 @@ clone()
     rm -f tf-rmm
     url=https://github.com/TF-RMM/tf-rmm
     version=481cb7f4
-    src=tf-rmm-main-s1pie
+    src=tf-rmm-main-s1pie-sbsa
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url $src.tmp
@@ -31,7 +31,7 @@ build()
 {
     pushd $(readlink -f tf-rmm)
     env CROSS_COMPILE=aarch64-linux-gnu- \
-      cmake -DRMM_CONFIG=qemu_virt_defcfg \
+      cmake -DRMM_CONFIG=qemu_sbsa_defcfg \
       -DCMAKE_BUILD_TYPE=Debug \
       -DLOG_LEVEL=40 \
       -S . -B build
