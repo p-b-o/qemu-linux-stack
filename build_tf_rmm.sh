@@ -22,7 +22,7 @@ build()
 {
     pushd $(readlink -f tf-rmm)
     env CROSS_COMPILE=aarch64-linux-gnu- \
-      cmake -DRMM_CONFIG=qemu_virt_defcfg \
+      cmake -DRMM_CONFIG=qemu_sbsa_defcfg \
       -DCMAKE_BUILD_TYPE=Debug \
       -DLOG_LEVEL=40 \
       -S . -B build
