@@ -34,6 +34,8 @@ build()
     scripts/config --enable IOMMUFD
     scripts/config --enable VFIO_DEVICE_CDEV
     scripts/config --enable ARM_SMMU_V3_IOMMUFD
+    # 16KB pages
+    scripts/config --enable ARM64_16K_PAGES
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config
