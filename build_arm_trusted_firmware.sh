@@ -26,25 +26,15 @@ build()
     # boot with edk2, as uboot does not seem to work with rme
     # https://trustedfirmware-a.readthedocs.io/en/latest/components/realm-management-extension.html#building-and-running-tf-a-with-rme
     intercept-build --append \
-    make PLAT=qemu QEMU_USE_GIC_DRIVER=QEMU_GICV3 \
-         BL33=../edk2/Build/ArmVirtQemuKernel-AARCH64/DEBUG_GCC5/FV/QEMU_EFI.fd \
+    make PLAT=qemu_sbsa \
          ENABLE_RME=1 \
          RMM=../tf-rmm/build/Debug/rmm.img \
          LOG_LEVEL=40 \
          DEBUG=1 \
          all fip -j$(nproc)
-    dd if=build/qemu/debug/bl1.bin of=flash.bin bs=4096 conv=notrunc
-    dd if=build/qemu/debug/fip.bin of=flash.bin seek=64 bs=4096 conv=notrunc
     sed -i compile_commands.json -e 's/"cc"/"aarch64-linux-gnu-gcc"/'
     popd
 }
 
-output()
-{
-    mkdir -p out
-    rsync ./arm-trusted-firmware/flash.bin out/flash.bin
-}
-
 clone
 build
-output
