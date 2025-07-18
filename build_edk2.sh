@@ -45,7 +45,7 @@ build()
     export PACKAGES_PATH=$(pwd):$(pwd)/edk2-platforms
     # copy bin from TF-A
     mkdir -p Platform/Qemu/Sbsa/
-    cp -f ../arm-trusted-firmware/build/qemu_sbsa/debug/*.bin Platform/Qemu/Sbsa/
+    cp -f ../arm-trusted-firmware/build/qemu_sbsa/release/*.bin Platform/Qemu/Sbsa/
 
     make -C BaseTools -j $(nproc)
     export GCC5_AARCH64_PREFIX=aarch64-linux-gnu-
