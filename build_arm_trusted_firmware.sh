@@ -10,10 +10,10 @@ fi
 
 clone()
 {
-    rm -f arm-trusted-firmware
+    rm -f arm-trusted-firmware-release
     url=https://github.com/ARM-software/arm-trusted-firmware
     version=v2.13.0
-    src=arm-trusted-firmware-$version-patch-tcr2-sctlr2-pie-gcs-sbsa
+    src=arm-trusted-firmware-$version-patch-tcr2-sctlr2-pie-gcs-sbsa-release
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
@@ -36,9 +36,8 @@ build()
     intercept-build --append \
     make PLAT=qemu_sbsa \
          ENABLE_RME=1 \
-         RMM=../tf-rmm/build/Debug/rmm.img \
+         RMM=../tf-rmm/build/Release/rmm.img \
          LOG_LEVEL=40 \
-         DEBUG=1 \
          all fip -j$(nproc)
     sed -i compile_commands.json -e 's/"cc"/"aarch64-linux-gnu-gcc"/'
     popd
