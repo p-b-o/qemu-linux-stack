@@ -2,14 +2,14 @@ settings set interpreter.prompt-on-quit false
 
 gdb-remote localhost:1234
 
-target modules add arm-trusted-firmware/build/qemu_sbsa/debug/bl1/bl1.elf
-target modules load --file arm-trusted-firmware/build/qemu_sbsa/debug/bl1/bl1.elf --slide 0x0
+target modules add arm-trusted-firmware/build/qemu_sbsa/release/bl1/bl1.elf
+target modules load --file arm-trusted-firmware/build/qemu_sbsa/release/bl1/bl1.elf --slide 0x0
 
-target modules add arm-trusted-firmware/build/qemu_sbsa/debug/bl2/bl2.elf
-target modules load --file arm-trusted-firmware/build/qemu_sbsa/debug/bl2/bl2.elf --slide 0x0
+target modules add arm-trusted-firmware/build/qemu_sbsa/release/bl2/bl2.elf
+target modules load --file arm-trusted-firmware/build/qemu_sbsa/release/bl2/bl2.elf --slide 0x0
 
-target modules add arm-trusted-firmware/build/qemu_sbsa/debug/bl31/bl31.elf
-target modules load --file arm-trusted-firmware/build/qemu_sbsa/debug/bl31/bl31.elf --slide 0x0
+target modules add arm-trusted-firmware/build/qemu_sbsa/release/bl31/bl31.elf
+target modules load --file arm-trusted-firmware/build/qemu_sbsa/release/bl31/bl31.elf --slide 0x0
 
 # For rmm, we need to find loaded address (chosen by TF-A) + offset (build)
 # Check for RMM address loaded by TF-A:
@@ -18,8 +18,8 @@ target modules load --file arm-trusted-firmware/build/qemu_sbsa/debug/bl31/bl31.
 # Check for offset in RMM image:
 # ./build_tf_rmm.sh |& grep 'offset of the RMM core'
 # INFO: The offset of the RMM core is 393216 (0x60000) bytes from start of packaged bin.
-target modules add tf-rmm/build/Debug/rmm.elf
-target modules load --file tf-rmm/build/Debug/rmm.elf --slide 0x10000060000
+target modules add tf-rmm/build/Release/rmm.elf
+target modules load --file tf-rmm/build/Release/rmm.elf --slide 0x10000060000
 
 # EDK2 directly prints gdb add-symbol-file commands with .text address.
 # only DxeCore is added here
