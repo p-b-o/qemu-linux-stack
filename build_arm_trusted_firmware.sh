@@ -28,9 +28,8 @@ build()
     intercept-build --append \
     make PLAT=qemu_sbsa \
          ENABLE_RME=1 \
-         RMM=../tf-rmm/build/Debug/rmm.img \
+         RMM=../tf-rmm/build/Release/rmm.img \
          LOG_LEVEL=40 \
-         DEBUG=1 \
          all fip -j$(nproc)
     sed -i compile_commands.json -e 's/"cc"/"aarch64-linux-gnu-gcc"/'
     popd
