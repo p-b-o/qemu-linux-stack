@@ -1,0 +1,96 @@
+From 6f259e26fe6cb8b36c8e1bed5e8149ee6ee55cce Mon Sep 17 00:00:00 2001
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 4 Jul 2025 14:59:04 -0600
+Subject: [PATCH] feat(qemu): Add stubs to support IDE key management
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ plat/qemu/qemu_sbsa/platform.mk        |  9 +++++
+ plat/qemu/qemu_sbsa/sbsa_ide_keymgmt.c | 48 ++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
+ create mode 100644 plat/qemu/qemu_sbsa/sbsa_ide_keymgmt.c
+
+diff --git a/plat/qemu/qemu_sbsa/platform.mk b/plat/qemu/qemu_sbsa/platform.mk
+index 8ec3a82490..ad9d8656b1 100644
+--- a/plat/qemu/qemu_sbsa/platform.mk
++++ b/plat/qemu/qemu_sbsa/platform.mk
+@@ -20,6 +20,10 @@ NEED_BL32		:=	yes
+ EL3_EXCEPTION_HANDLING	:=	1
+ endif
+ 
++ifeq (${ENABLE_RME},1)
++    RMMD_ENABLE_IDE_KEY_PROG	:= 1
++endif
++
+ include plat/qemu/common/common.mk
+ 
+ # Enable new version of image loading on QEMU platforms
+@@ -47,6 +51,11 @@ ifeq (${SPM_MM},1)
+ 	BL31_SOURCES		+=	${PLAT_QEMU_COMMON_PATH}/qemu_spm.c
+ endif
+ 
++ifeq (${ENABLE_RME},1)
++	BL31_SOURCES		+=	${PLAT_QEMU_PATH}/sbsa_ide_keymgmt.c
++endif
++
++
+ # Use known base for UEFI if not given from command line
+ # By default BL33 is at FLASH1 base
+ PRELOADED_BL33_BASE	?= 0x10000000
+diff --git a/plat/qemu/qemu_sbsa/sbsa_ide_keymgmt.c b/plat/qemu/qemu_sbsa/sbsa_ide_keymgmt.c
+new file mode 100644
+index 0000000000..ff053510c7
+--- /dev/null
++++ b/plat/qemu/qemu_sbsa/sbsa_ide_keymgmt.c
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (c) 2025, Arm Limited and Contributors. All rights reserved.
++ *
++ * SPDX-License-Identifier: BSD-3-Clause
++ */
++
++#include <errno.h>
++#include <string.h>
++
++#include <plat/common/platform.h>
++
++int plat_rmmd_el3_ide_key_program(uint64_t ecam_address, uint64_t root_port_id,
++				  uint64_t ide_stream_info,
++				  rp_ide_key_info_t *ide_key_info_ptr, uint64_t request_id,
++				  uint64_t cookie)
++{
++	/* placeholder to add further implementation */
++
++	return 0;
++
++}
++
++int plat_rmmd_el3_ide_key_set_go(uint64_t ecam_address, uint64_t root_port_id,
++				 uint64_t ide_stream_info, uint64_t request_id,
++				 uint64_t cookie)
++{
++	/* placeholder to add further implementation */
++
++	return 0;
++
++}
++
++int plat_rmmd_el3_ide_key_set_stop(uint64_t ecam_address, uint64_t root_port_id,
++				   uint64_t ide_stream_info, uint64_t request_id,
++				   uint64_t cookie)
++{
++	/* placeholder to add further implementation */
++
++	return 0;
++}
++
++int plat_rmmd_el3_ide_km_pull_response(uint64_t ecam_address, uint64_t root_port_id,
++				   uint64_t *req_resp, uint64_t *request,
++				   uint64_t *cookie)
++{
++	/* placeholder to add further implementation */
++	return E_RMM_UNK;
++}
+-- 
+GitLab
+

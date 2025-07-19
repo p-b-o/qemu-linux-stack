@@ -1,0 +1,117 @@
+From 6921b21e520b6749e598f716e570a135a8ed0b62 Mon Sep 17 00:00:00 2001
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 2 Jun 2025 14:18:52 -0600
+Subject: [PATCH] refactor(qemu): Move manifest definition out of function
+
+Move RMM manifest definition out of function plat_rmmd_load_manifest().
+That way it can be expanded without impacting code readability.
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ plat/qemu/common/qemu_common.c | 83 +++++++++++++++++-----------------
+ 1 file changed, 42 insertions(+), 41 deletions(-)
+
+diff --git a/plat/qemu/common/qemu_common.c b/plat/qemu/common/qemu_common.c
+index 4a79a908c6..8b8b6f8640 100644
+--- a/plat/qemu/common/qemu_common.c
++++ b/plat/qemu/common/qemu_common.c
+@@ -275,6 +275,48 @@ static uint64_t checksum_calc(uint64_t *buffer, size_t size)
+ 	return sum;
+ }
+ 
++/*
++ * Boot manifest structure illustration:
++ *
++ * +----------------------------------------+
++ * |  offset  |   field      |  comment     |
++ * +----------+--------------+--------------+
++ * |    0     |  version     | 0x00000003   |
++ * +----------+--------------+--------------+
++ * |    4     |  padding     | 0x00000000   |
++ * +----------+--------------+--------------+
++ * |    8     | plat_data    |    NULL      |
++ * +----------+--------------+--------------+
++ * |    16    | num_banks    |              |
++ * +----------+--------------+              |
++ * |    24    |   banks      | plat_dram    |
++ * +----------+--------------+              |
++ * |    32    | checksum     |              |
++ * +----------+--------------+--------------+
++ * |    40    | num_consoles |              |
++ * +----------+--------------+              |
++ * |    48    | consoles     | plat_console |
++ * +----------+--------------+              |
++ * |    56    | checksum     |              |
++ * +----------+--------------+--------------+
++ * |    64    |  base 0      |              |
++ * +----------+--------------+   bank[0]    |
++ * |    72    |  size 0      |              |
++ * +----------+--------------+--------------+
++ * |    80    |  base        |              |
++ * +----------+--------------+              |
++ * |    88    |  map_pages   |              |
++ * +----------+--------------+              |
++ * |    96    |  name        |              |
++ * +----------+--------------+  consoles[0] |
++ * |   104    |  clk_in_hz   |              |
++ * +----------+--------------+              |
++ * |   112    |  baud_rate   |              |
++ * +----------+--------------+              |
++ * |   120    |  flags       |              |
++ * +----------+--------------+--------------+
++ */
++
+ int plat_rmmd_load_manifest(struct rmm_manifest *manifest)
+ {
+ 	int i, last;
+@@ -292,47 +334,6 @@ int plat_rmmd_load_manifest(struct rmm_manifest *manifest)
+ 	manifest->plat_dram.num_banks = num_banks;
+ 	manifest->plat_console.num_consoles = num_consoles;
+ 
+-	/*
+-	 * Boot manifest structure illustration:
+-	 *
+-	 * +----------------------------------------+
+-	 * |  offset  |   field      |  comment     |
+-	 * +----------+--------------+--------------+
+-	 * |    0     |  version     | 0x00000003   |
+-	 * +----------+--------------+--------------+
+-	 * |    4     |  padding     | 0x00000000   |
+-	 * +----------+--------------+--------------+
+-	 * |    8     | plat_data    |    NULL      |
+-	 * +----------+--------------+--------------+
+-	 * |    16    | num_banks    |              |
+-	 * +----------+--------------+              |
+-	 * |    24    |   banks      | plat_dram    |
+-	 * +----------+--------------+              |
+-	 * |    32    | checksum     |              |
+-	 * +----------+--------------+--------------+
+-	 * |    40    | num_consoles |              |
+-	 * +----------+--------------+              |
+-	 * |    48    | consoles     | plat_console |
+-	 * +----------+--------------+              |
+-	 * |    56    | checksum     |              |
+-	 * +----------+--------------+--------------+
+-	 * |    64    |  base 0      |              |
+-	 * +----------+--------------+   bank[0]    |
+-	 * |    72    |  size 0      |              |
+-	 * +----------+--------------+--------------+
+-	 * |    80    |  base        |              |
+-	 * +----------+--------------+              |
+-	 * |    88    |  map_pages   |              |
+-	 * +----------+--------------+              |
+-	 * |    96    |  name        |              |
+-	 * +----------+--------------+  consoles[0] |
+-	 * |   104    |  clk_in_hz   |              |
+-	 * +----------+--------------+              |
+-	 * |   112    |  baud_rate   |              |
+-	 * +----------+--------------+              |
+-	 * |   120    |  flags       |              |
+-	 * +----------+--------------+--------------+
+-	 */
+ 	bank_ptr = (struct memory_bank *)
+ 		(((uintptr_t)manifest) + sizeof(*manifest));
+ 
+-- 
+GitLab
+

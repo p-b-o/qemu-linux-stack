@@ -31,11 +31,11 @@ jobs:
       - run: echo "----- build latest QEMU -----"
       - run: sudo sed -i -e "s/ deb$/ deb deb-src/" /etc/apt/sources.list.d/ubuntu.sources
       - run: sudo apt update && sudo apt build-dep -y qemu
-      - run: git clone https://gitlab.com/qemu-project/qemu --branch v10.0.2 --single-branch --depth 1
+      - run: git clone https://github.com/pbo-linaro/qemu --branch smmu-da-2025-11-05 --single-branch --depth 1
       - run: cd qemu && ./configure --target-list=aarch64-softmmu && ninja -C build && cd ..
 
       - run: echo "----- run nested guest and exit -----"
-      - run: INIT='env INIT=true /host/host.sh qemu-system-aarch64' timeout 10m ./run.sh ./qemu/build/qemu-system-aarch64
+      - run: timeout 10m ./run.sh ./qemu/build/qemu-system-aarch64
 
       - run: echo "----- create artifacts ------"
       - run: echo $(basename ${{github.ref}}) > branch
