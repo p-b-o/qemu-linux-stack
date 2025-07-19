@@ -12,13 +12,15 @@ clone()
 {
     rm -f linux
     url=https://gitlab.arm.com/linux-arm/linux-cca
-    version=cca-host/v9
-    src=linux_$(echo $version | tr '/' '_')
+    version=cca-1.1/da/proto/rmm-1.1-alp12/v1
+    src=linux_$(echo $version | tr '/' '_')-device-assignment
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
         pushd $src.tmp
         git am ../patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
+        # https://git.codelinaro.org/linaro/dcap/linux/-/commits/alp12
+        git am ../patches/linux-coco-dont-perform-mmio-range-validation.patch
         popd
         mv $src.tmp $src
     fi
@@ -45,6 +47,9 @@ build()
     # # Enable the configfs-tsm driver that provides the attestation interface
     scripts/config --enable VIRT_DRIVERS
     scripts/config --enable ARM_CCA_GUEST
+    # enable host cca
+    scripts/config --enable ARM_CCA_HOST
+    scripts/config --enable PCI_TSM
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config

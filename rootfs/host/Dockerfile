@@ -4,6 +4,7 @@ RUN apt update && apt install -y \
     bash-completion pciutils net-tools \
     iputils-ping util-linux procps htop
 RUN apt install -y libfdt1
+RUN apt update && apt install -y mtools
 RUN echo host > /hostname
 RUN mkdir /host
 COPY --from=common resolv.conf /etc/resolv.conf
