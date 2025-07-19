@@ -1,0 +1,124 @@
+From 13709cb70105515eca21e93450a43e0ceb7c1ab1 Mon Sep 17 00:00:00 2001
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 18 Jun 2025 15:11:19 -0600
+Subject: [PATCH] irq: Avoid concurrent access from virtio and vfio subsystems
+
+Both VFIO and Virtio subsystems end up calling function
+irq__add_msix_route() at kernel boot time.  Since that function
+uses global variables and is not serialized, variables get
+trampled and failure ensues.
+
+For the time being, introduce a mutex to avoid concurrent access
+while the real solution is investigated.
+
+vfio__init()
+  legacy_vfio__init()
+    legacy_vfio_configure_devices()
+      legacy_vfio_configure_device()
+        vfio_pci_setup_device()
+          vfio_pci_configure_dev_regions()
+            pci__register_bar_regions()
+              vfio_pci_bar_activate()
+                vfio_pci_msix_table_access()
+                  vfio_pci_update_msi_entry()
+                    irq__add_msix_route()  <--- Problem!
+
+virtio_blk__init()
+  virtio_blk__init_one()
+    virtio_init()
+      vdev->ops->init() // virtio_pci__init()
+        pci__register_bar_regions()
+          virtio_pci__bar_activate()
+            virtio_pci_modern__io_mmio_callback()
+              virtio_pci_access()
+                virtio_pci__common_write()
+                  virtio_pci__add_msix_route()
+                    irq__add_msix_route() <--- Problem!
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ irq.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
+
+diff --git a/irq.c b/irq.c
+index cdcf992..e379191 100644
+--- a/irq.c
++++ b/irq.c
+@@ -7,6 +7,9 @@
+ #include "kvm/kvm.h"
+ #include "kvm/irq.h"
+ #include "kvm/kvm-arch.h"
++#include "kvm/mutex.h"
++
++static DEFINE_MUTEX(mutex_msix);
+ 
+ static u8 next_line = KVM_IRQ_OFFSET;
+ static int allocated_gsis = 0;
+@@ -106,12 +109,16 @@ int irq__add_msix_route(struct kvm *kvm, struct msi_msg *msg, u32 device_id)
+ 	int r;
+ 	struct kvm_irq_routing_entry *entry;
+ 
+-	if (!check_for_irq_routing(kvm))
+-		return -ENXIO;
++	mutex_lock(&mutex_msix);
++
++	if (!check_for_irq_routing(kvm)) {
++		r = -ENXIO;
++		goto out;
++	}
+ 
+ 	r = irq__allocate_routing_entry();
+ 	if (r)
+-		return r;
++		goto out;
+ 
+ 	entry = &irq_routing->entries[irq_routing->nr];
+ 	*entry = (struct kvm_irq_routing_entry) {
+@@ -131,9 +138,13 @@ int irq__add_msix_route(struct kvm *kvm, struct msi_msg *msg, u32 device_id)
+ 
+ 	r = msi_routing_ops->update_route(kvm, entry);
+ 	if (r)
+-		return r;
++		goto out;
+ 
+-	return next_gsi++;
++
++	r = next_gsi++;
++out:
++	mutex_unlock(&mutex_msix);
++	return r;
+ }
+ 
+ static bool update_data(u32 *ptr, u32 newdata)
+@@ -151,11 +162,13 @@ void irq__update_msix_route(struct kvm *kvm, u32 gsi, struct msi_msg *msg)
+ 	unsigned int i;
+ 	bool changed;
+ 
++	mutex_lock(&mutex_msix);
++
+ 	for (i = 0; i < irq_routing->nr; i++)
+ 		if (gsi == irq_routing->entries[i].gsi)
+ 			break;
+ 	if (i == irq_routing->nr)
+-		return;
++		goto out;
+ 
+ 	entry = &irq_routing->entries[i].u.msi;
+ 
+@@ -164,10 +177,12 @@ void irq__update_msix_route(struct kvm *kvm, u32 gsi, struct msi_msg *msg)
+ 	changed |= update_data(&entry->data, msg->data);
+ 
+ 	if (!changed)
+-		return;
++		goto out;
+ 
+ 	if (msi_routing_ops->update_route(kvm, &irq_routing->entries[i]))
+ 		die_perror("KVM_SET_GSI_ROUTING");
++out:
++	mutex_unlock(&mutex_msix);
+ }
+ 
+ int irq__common_add_irqfd(struct kvm *kvm, unsigned int gsi, int trigger_fd,
+-- 
+2.47.3
+

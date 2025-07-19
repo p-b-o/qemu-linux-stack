@@ -1,0 +1,31 @@
+From 9484b9e7107b079248563daacace5e52cbb52b12 Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@linaro.org>
+Date: Mon, 14 Jul 2025 12:04:09 -0700
+Subject: [PATCH] plat/qemu/common/: add support for FEAT_TCR2 and FEAT_SCTLR2
+
+QEMU supports this since 10.1.
+ENABLE_FEAT_TCR2 is needed to boot a Linux guest.
+ENABLE_FEAT_SCTLR2 is needed to boot a Linux nested guest.
+
+---
+ plat/qemu/common/common.mk | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/plat/qemu/common/common.mk b/plat/qemu/common/common.mk
+index 751511cf8..6bc108492 100644
+--- a/plat/qemu/common/common.mk
++++ b/plat/qemu/common/common.mk
+@@ -122,6 +122,10 @@ ENABLE_FEAT_FGT		:=	2
+ # 8.7
+ ENABLE_FEAT_HCX		:=	2
+ 
++# 8.8
++ENABLE_FEAT_TCR2	:=	2
++ENABLE_FEAT_SCTLR2	:=	2
++
+ # SPM_MM is not compatible with ENABLE_SVE_FOR_NS (build breaks)
+ ifeq (${SPM_MM},1)
+ 	ENABLE_SVE_FOR_NS	:= 0
+-- 
+2.47.2
+
