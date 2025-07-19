@@ -15,9 +15,9 @@ b bl31_main
 # $ ./run.sh qemu-system-aarch64 | grep 'Reserved RMM memory'
 # INFO:    Reserved RMM memory [0x10000000000, 0x10042ffffff] in Device tree
 # Check for offset in RMM image:
-# ./build_rmm.sh |& grep 'offset of the RMM core'
-# INFO: The offset of the RMM core is 393216 (0x60000) bytes from start of packaged bin.
-add-symbol-file ./tf-rmm/build/Debug/rmm.elf 0x10000060000
+# ./build_rmm.sh |& grep 'offset of the RMM bin'
+# INFO: The offset of the RMM bin is 118784 (0x1d000) bytes
+add-symbol-file ./tf-rmm/build/Debug/rmm.elf 0x1000001d000
 b rmm_main
 
 # EDK2 directly prints add-symbol-file with expected offsets
