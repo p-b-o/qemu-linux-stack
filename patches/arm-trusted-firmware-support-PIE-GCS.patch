@@ -1,0 +1,29 @@
+From 0925eadf8922bbe811ec41fb983347928f3bc63b Mon Sep 17 00:00:00 2001
+From: Richard Henderson <richard.henderson@linaro.org>
+Date: Thu, 2 Oct 2025 11:43:11 -0700
+Subject: [PATCH] plat/qemu/common/: add support for FEAT_{S1PIE,S2PIE,GCS}
+
+---
+ plat/qemu/common/common.mk | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/plat/qemu/common/common.mk b/plat/qemu/common/common.mk
+index 6bc1084..2c344b6 100644
+--- a/plat/qemu/common/common.mk
++++ b/plat/qemu/common/common.mk
+@@ -126,6 +126,13 @@ ENABLE_FEAT_HCX		:=	2
+ ENABLE_FEAT_TCR2	:=	2
+ ENABLE_FEAT_SCTLR2	:=	2
+ 
++# 8.9
++ENABLE_FEAT_S1PIE	:=	2
++ENABLE_FEAT_S2PIE	:=	2
++
++# 9.4
++ENABLE_FEAT_GCS		=	2
++
+ # SPM_MM is not compatible with ENABLE_SVE_FOR_NS (build breaks)
+ ifeq (${SPM_MM},1)
+ 	ENABLE_SVE_FOR_NS	:= 0
+-- 
+2.43.0
