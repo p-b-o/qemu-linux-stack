@@ -13,8 +13,9 @@ clone()
     ./clone.sh \
         linux \
         https://gitlab.arm.com/linux-arm/linux-cca \
-        cca-host/v9 \
-        patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
+        cca-1.1/da/proto/rmm-1.1-alp12/v1 \
+        patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch \
+        patches/linux-coco-dont-perform-mmio-range-validation.patch
 }
 
 build()
@@ -37,6 +38,9 @@ build()
     # # Enable the configfs-tsm driver that provides the attestation interface
     scripts/config --enable VIRT_DRIVERS
     scripts/config --enable ARM_CCA_GUEST
+    # enable host cca
+    scripts/config --enable ARM_CCA_HOST
+    scripts/config --enable PCI_TSM
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config
