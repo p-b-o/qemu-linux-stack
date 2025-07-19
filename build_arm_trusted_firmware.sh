@@ -13,12 +13,18 @@ clone()
     rm -f arm-trusted-firmware
     url=https://github.com/ARM-software/arm-trusted-firmware
     version=v2.13.0
-    src=arm-trusted-firmware-$version-patch-tcr2-sctlr2-pie-gcs-sbsa
+    src=arm-trusted-firmware-$version-patch-tcr2-sctlr2-pie-gcs-sbsa-da
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
         pushd $src.tmp
+        # https://git.codelinaro.org/linaro/dcap/tf-a/trusted-firmware-a/-/commits/alp12
+        git am ../patches/arm-trusted-firmware-support-move-manifest-definition.patch
+        git am ../patches/arm-trusted-firmware-add-pcie-root-information.patch
+        git am ../patches/arm-trusted-firmware-add-stubs-for-IDE-key-management.patch
         git am ../patches/arm-trusted-firmware-support-FEAT_TCR2-and-FEAT-SCTLR2.patch
+        # add pie-gcs support, even though it's not supported on RMM side for da
+        # branch.
         git am ../patches/arm-trusted-firmware-support-PIE-GCS.patch
         popd
         mv $src.tmp $src
