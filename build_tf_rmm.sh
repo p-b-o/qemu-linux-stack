@@ -12,8 +12,8 @@ clone()
 {
     ./clone.sh \
         tf-rmm \
-        https://github.com/TF-RMM/tf-rmm \
-        481cb7f4 \
+        https://review.trustedfirmware.org/TF-RMM/tf-rmm.git \
+        topics/da_alp12 \
         patches/rmm-support-lower-pmu-versions.patch \
         patches/rmm-silence-Unhandled-read-write-regs-info.patch
 }
@@ -25,6 +25,7 @@ build()
       cmake -DRMM_CONFIG=qemu_sbsa_defcfg \
       -DCMAKE_BUILD_TYPE=Debug \
       -DLOG_LEVEL=40 \
+      -DRMM_V1_1=ON \
       -S . -B build
     intercept-build --append \
     make -C build -j "$(nproc)"

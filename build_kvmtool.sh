@@ -13,7 +13,8 @@ clone()
     ./clone.sh \
         kvmtool \
         https://gitlab.arm.com/linux-arm/kvmtool-cca \
-        cca/v7
+        cca-1.1/da/proto/rmm-1.1-alp12/v1 \
+        patches/kvmtool-irq-Avoid-concurrent-access-from-virtio-and-vfio-sub.patch
 }
 
 build()
