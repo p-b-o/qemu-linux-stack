@@ -16,8 +16,8 @@ b bl31_main
 # INFO:    Reserved RMM memory [0x10000000000, 0x10042ffffff] in Device tree
 # Check for offset in RMM image:
 # ./build_rmm.sh |& grep 'offset of the RMM bin'
-# INFO: The offset of the RMM bin is 118784 (0x1d000) bytes
-add-symbol-file ./tf-rmm/build/Debug/rmm.elf 0x1000001d000
+# INFO: The offset of the RMM core is 131072 (0x20000) bytes from start of packaged bin
+add-symbol-file ./tf-rmm/build/Debug/rmm.elf 0x10000020000
 b rmm_main
 
 # EDK2 directly prints add-symbol-file with expected offsets
