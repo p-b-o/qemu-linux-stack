@@ -1,0 +1,26 @@
+From 455bda80e8d24a051eb99d69af9f1aefde477124 Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@linaro.org>
+Date: Fri, 3 Oct 2025 13:19:11 -0700
+Subject: [PATCH] drivers/
+
+arm-smmuv3: update base for QEMU
+---
+ drivers/arm-smmuv3/include/arm-smmuv3.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/arm-smmuv3/include/arm-smmuv3.h b/drivers/arm-smmuv3/include/arm-smmuv3.h
+index 5573906..8edccc2 100755
+--- a/drivers/arm-smmuv3/include/arm-smmuv3.h
++++ b/drivers/arm-smmuv3/include/arm-smmuv3.h
+@@ -14,7 +14,7 @@
+ #define GEN_MASK(MSB, LSB) ((ALL_1s(MSB - LSB + 1)) << (LSB))
+ #define COMPOSE(value, shift, mask) (((value) & (mask)) << (shift))
+ 
+-#define ARM_SMMUV3_BASE		(0x2B400000)
++#define ARM_SMMUV3_BASE		(0x60050000)
+ 
+ /*Registers in Normal World Page 0*/
+ #define SMMU_IDR0		0x0
+-- 
+2.47.3
+
