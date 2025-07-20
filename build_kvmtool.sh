@@ -12,7 +12,7 @@ clone()
 {
     rm -f kvmtool
     url=https://gitlab.arm.com/linux-arm/kvmtool-cca
-    version=cca-1.1/da/proto/rmm-1.1-alp12/v1
+    version=cca/tdisp-upstream-post-v1.3
     src=kvmtool_$(echo $version | tr '/' '_')-device-assignment
     if [ ! -d $src ]; then
         rm -rf $src.tmp
