@@ -13,9 +13,10 @@ clone()
     ./clone.sh \
         tf-rmm \
         https://review.trustedfirmware.org/TF-RMM/tf-rmm.git \
-        topics/da_alp12 \
+        topics/da_alp12_v2 \
         patches/rmm-support-lower-pmu-versions.patch \
-        patches/rmm-silence-Unhandled-read-write-regs-info.patch
+        patches/rmm-silence-Unhandled-read-write-regs-info.patch \
+        patches/rmm-arm-smmuv3-update-base-for-qemu.patch
 }
 
 build()
