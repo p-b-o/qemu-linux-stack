@@ -12,7 +12,7 @@ clone()
 {
     rm -f tf-rmm
     url=https://review.trustedfirmware.org/TF-RMM/tf-rmm.git
-    version=topics/da_alp12
+    version=topics/da_alp12_v2
     src=tf-rmm-$(echo "$version" | tr '/' '_')-version-support-lower-pmu-versions-sbsa-device-assignment
     if [ ! -d $src ]; then
         rm -rf $src.tmp
@@ -21,6 +21,7 @@ clone()
         git checkout $version
         git submodule update --init --depth 1
         git am ../patches/rmm-support-lower-pmu-versions.patch
+        git am ../patches/rmm-arm-smmuv3-update-base-for-qemu.patch
         popd
         mv $src.tmp $src
     fi

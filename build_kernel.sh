@@ -11,16 +11,14 @@ fi
 clone()
 {
     rm -f linux
-    url=https://gitlab.arm.com/linux-arm/linux-cca
-    version=cca-1.1/da/proto/rmm-1.1-alp12/v1
+    url=https://git.gitlab.arm.com/linux-arm/linux-cca.git
+    version=cca/tdisp-upstream-post-v1.3
     src=linux_$(echo $version | tr '/' '_')-device-assignment
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
         pushd $src.tmp
         git am ../patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
-        # https://git.codelinaro.org/linaro/dcap/linux/-/commits/alp12
-        git am ../patches/linux-coco-dont-perform-mmio-range-validation.patch
         popd
         mv $src.tmp $src
     fi
@@ -50,6 +48,19 @@ build()
     # enable host cca
     scripts/config --enable ARM_CCA_HOST
     scripts/config --enable PCI_TSM
+    scripts/config --enable PCI_DOE
+    scripts/config --enable TSM_GUEST
+    scripts/config --enable TSM_REPORTS
+    scripts/config --enable TSM_MEASUREMENTS
+    scripts/config --enable TSM
+    scripts/config --enable IOMMUFD
+    scripts/config --enable ARM_SMMU_V3_IOMMUFD
+    scripts/config --enable IOMMUFD_DRIVER_CORE
+    scripts/config --enable IOMMUFD_VFIO_CONTAINER
+    scripts/config --enable IOMMUFD_DRIVER
+    scripts/config --enable VFIO_DEVICE_CDEV
+    scripts/config --disable VFIO_CONTAINER
+
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config
