@@ -4,8 +4,8 @@ RUN apt update && apt install -y \
 build-essential \
 binutils \
 git \
-gcc-aarch64-linux-gnu \
-g++-aarch64-linux-gnu \
+gcc-x86-64-linux-gnu \
+g++-x86-64-linux-gnu \
 bison \
 flex \
 bc \
@@ -45,9 +45,14 @@ RUN apt update && apt install -y black mypy node-typescript
 RUN wget -q https://github.com/biomejs/biome/releases/download/@biomejs/biome@2.4.5/biome-linux-x64 && \
 mv biome-linux-x64 /usr/bin/biome && chmod +x /usr/bin/biome
 
+RUN apt update && apt install -y \
+libelf-dev
+RUN apt update && \
+apt install -y uuid-dev python-is-python3 nasm acpica-tools
+
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
 RUN mkdir /opt/compiler_wrappers && \
-    for c in gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \
+    for c in gcc g++ x86_64-linux-gnu-gcc x86_64-linux-gnu-g++; do \
         f=/opt/compiler_wrappers/$c && \
         echo '#!/usr/bin/env bash' >> $f && \
         echo 'args="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -g"' >> $f && \
