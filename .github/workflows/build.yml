@@ -32,10 +32,10 @@ jobs:
       - run: sudo sed -i -e "s/ deb$/ deb deb-src/" /etc/apt/sources.list.d/ubuntu.sources
       - run: sudo apt update && sudo apt build-dep -y qemu
       - run: git clone https://gitlab.com/qemu-project/qemu --branch v10.0.2 --single-branch --depth 1
-      - run: cd qemu && ./configure --target-list=aarch64-softmmu && ninja -C build && cd ..
+      - run: cd qemu && ./configure --target-list=x86_64-softmmu && ninja -C build && cd ..
 
-      - run: echo "----- run nested guest and exit -----"
-      - run: INIT='env INIT=true /host/host.sh qemu-system-aarch64' timeout 10m ./run.sh ./qemu/build/qemu-system-aarch64
+      - run: echo "----- run VM and exit -----"
+      - run: INIT='true' timeout 10m ./run.sh ./qemu/build/qemu-system-x86_64
 
       - run: echo "----- create artifacts ------"
       - run: echo $(basename ${{github.ref}}) > branch
