@@ -3,11 +3,11 @@
 set -euo pipefail
 
 if [ $# -lt 1 ]; then
-    echo "usage: qemu_aarch64_cmd"
+    echo "usage: qemu_x86_64_cmd"
     exit 1
 fi
 
-qemu_aarch64_cmd=$*
+qemu_x86_64_cmd=$*
 
 tmux_session()
 {
@@ -22,4 +22,4 @@ if [ -z "$(which tmux)" ]; then
     echo "debug.sh: tmux needs to be installed on your machine"
     exit 1
 fi
-tmux_session ./run.sh $qemu_aarch64_cmd -S -s
+tmux_session ./run.sh $qemu_x86_64_cmd -S -s
