@@ -4,8 +4,8 @@ RUN apt update && apt install -y \
 build-essential \
 binutils \
 git \
-gcc-aarch64-linux-gnu \
-g++-aarch64-linux-gnu \
+gcc-x86-64-linux-gnu \
+g++-x86-64-linux-gnu \
 bison \
 flex \
 bc \
@@ -35,9 +35,14 @@ RUN ln -sf /usr/bin/llvm-addr2line-${LLVM_VERSION} /usr/bin/addr2line
 RUN ln -sf /usr/bin/lldb-${LLVM_VERSION} /usr/bin/lldb
 RUN ln -sf /usr/bin/lldb-dap-${LLVM_VERSION} /usr/bin/lldb-dap
 
+RUN apt update && apt install -y \
+libelf-dev
+RUN apt update && \
+apt install -y uuid-dev python-is-python3 nasm acpica-tools
+
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
 RUN mkdir /opt/compiler_wrappers && \
-    for c in gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \
+    for c in gcc g++ x86_64-linux-gnu-gcc x86_64-linux-gnu-g++; do \
         f=/opt/compiler_wrappers/$c && \
         echo '#!/usr/bin/env bash' >> $f && \
         echo 'args="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -g"' >> $f && \

@@ -1,11 +1,10 @@
-FROM --platform=linux/arm64 docker.io/arm64v8/debian:trixie
+# Use ubuntu (and not debian) as it comes with frame pointers enabled by default
+# https://ubuntu.com/blog/ubuntu-performance-engineering-with-frame-pointers-by-default
+FROM --platform=linux/amd64 docker.io/amd64/ubuntu:24.04
 
 RUN apt update && apt install -y \
     bash-completion pciutils net-tools \
     iputils-ping util-linux procps htop
-RUN apt update && apt install -y \
-    --no-install-recommends \
-    qemu-system-aarch64 ipxe-qemu
 RUN apt update && apt install -y strace
 RUN apt update && apt install -y kmod
 RUN echo host > /hostname
