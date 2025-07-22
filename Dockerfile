@@ -3,8 +3,8 @@ FROM docker.io/debian:trixie
 RUN apt update && apt install -y \
 build-essential \
 git \
-gcc-aarch64-linux-gnu \
-g++-aarch64-linux-gnu \
+gcc-x86-64-linux-gnu \
+g++-x86-64-linux-gnu \
 bison \
 flex \
 bc \
@@ -23,6 +23,10 @@ libgnutls28-dev
 RUN apt update && apt install -y ccache
 RUN apt update && apt install -y clang-tools
 RUN ln -s /usr/bin/intercept-build-* /usr/bin/intercept-build
+RUN apt update && apt install -y \
+libelf-dev
+RUN apt update && \
+apt install -y uuid-dev python-is-python3 nasm acpica-tools
 
 # Need recent uftrace, which implements dump --srcline (81fe3b94782)
 # uftrace v0.19 will contain the needed changes.
@@ -33,7 +37,7 @@ cd uftrace && git checkout 81fe3b94782 && \
 
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
 RUN mkdir /opt/compiler_wrappers && \
-    for c in gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \
+    for c in gcc g++ x86_64-linux-gnu-gcc x86_64-linux-gnu-g++; do \
         f=/opt/compiler_wrappers/$c && \
         echo '#!/usr/bin/env bash' >> $f && \
         echo 'args="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -g"' >> $f && \

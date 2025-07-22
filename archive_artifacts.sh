@@ -16,9 +16,8 @@ fi
 
 du -hc out/*
 # create a sparse archive with:
-# - run.sh/host.sh scripts
 # - kernel
 # - guest rootfs
 # - host rootfs
-./container.sh tar cJvfS $out run.sh host.sh out/
+./container.sh tar cJvfS $out run.sh out/
 du -h $out
