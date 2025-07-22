@@ -28,15 +28,15 @@ Thus, update or switch branches should not require any ``git clean -ffdx``.
 ./build.sh
 
 # run system using:
-./run.sh /path/to/qemu-system-aarch64
+./run.sh /path/to/qemu-system-x86_64
 # exit QEMU with ctrl-a + x
 
 # debug kernel, firmwares and bootloader using:
-./debug.sh /path/to/qemu-system-aarch64
-# additional gdb commands were added, like arm-exception-level. See gdb.py.
+./debug.sh /path/to/qemu-system-x86_64
+# additional gdb commands were added, like x64-privilege-level. See gdb.py.
 
 # to debug qemu itself:
-./run.sh gdb --args /path/to/qemu-system-aarch64
+./run.sh gdb --args /path/to/qemu-system-x86_64
 
 # to create an archive containing the whole stack:
 ./build.sh
@@ -47,14 +47,13 @@ It's possible to automate execution of commands in the VM:
 
 ```
 # Current working directory is mounted as /host in VM
-# A script named host.sh can be used to launch a nested VM
 # Finally, a custom command can be passed to init script using INIT env var
 
-# To boot a nested vm, and call hostname:
-INIT='env INIT=hostname /host/host.sh qemu-system-aarch64' ./run.sh qemu-system-aarch64
+# To boot a VM, and call hostname:
+INIT=hostname ./run.sh qemu-system-x86_64
 
 # In case command fail, init will trigger a Kernel panic
-INIT='false' ./run.sh qemu-system-aarch64
+INIT='false' ./run.sh qemu-system-x86_64
 ```
 
 Finally, you can generate a [perfetto](https://perfetto.dev/) trace, based on
@@ -63,7 +62,7 @@ In this case, you need to use a QEMU compiled from source and master branch.
 
 ```
 # generate a trace with timestamped execution
-./trace.sh /path/to/built/qemu-system-aarch64
+./trace.sh /path/to/built/qemu-system-x86_64
 ...
 1760047503.162041 NOTICE:  Booting Trusted Firmware
 1760047503.162544 NOTICE:  BL1: v2.13.0(debug):v2.13.0-2-gbaeb81f
