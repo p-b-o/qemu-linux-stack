@@ -13,7 +13,7 @@ clone()
     ./clone.sh \
         tf-rmm \
         https://github.com/TF-RMM/tf-rmm \
-        tf-rmm-v0.7.0 \
+        481cb7f4 \
         patches/rmm-support-lower-pmu-versions.patch
 }
 
