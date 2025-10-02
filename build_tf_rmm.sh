@@ -12,12 +12,13 @@ clone()
 {
     rm -f tf-rmm
     url=https://github.com/TF-RMM/tf-rmm
-    version=tf-rmm-v0.7.0
-    src=$version-support-lower-pmu-versions
+    version=481cb7f4
+    src=tf-rmm-main-s1pie
     if [ ! -d $src ]; then
         rm -rf $src.tmp
-        git clone $url --single-branch --branch $version --depth 1 $src.tmp
+        git clone $url $src.tmp
         pushd $src.tmp
+        git checkout $version
         git submodule update --init --depth 1
         git am ../patches/rmm-support-lower-pmu-versions.patch
         popd
