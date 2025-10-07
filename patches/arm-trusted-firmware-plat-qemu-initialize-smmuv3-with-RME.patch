@@ -1,0 +1,81 @@
+From a690ca6f124963eaedca59394655ec11d735fbd5 Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@linaro.org>
+Date: Tue, 7 Oct 2025 15:38:46 -0700
+Subject: [PATCH] plat/qemu/: initialize smmuv3 with RME
+
+---
+ plat/qemu/common/common.mk                 |  3 +++
+ plat/qemu/common/qemu_bl31_setup.c         | 14 ++++++++++++++
+ plat/qemu/qemu_sbsa/include/platform_def.h |  3 +++
+ 3 files changed, 20 insertions(+)
+
+diff --git a/plat/qemu/common/common.mk b/plat/qemu/common/common.mk
+index 2c344b6..a4b182d 100644
+--- a/plat/qemu/common/common.mk
++++ b/plat/qemu/common/common.mk
+@@ -75,6 +75,9 @@ BL31_SOURCES		+=	${QEMU_CPU_LIBS}				\
+ 				${PLAT_QEMU_COMMON_PATH}/aarch64/plat_helpers.S	\
+ 				${PLAT_QEMU_COMMON_PATH}/qemu_bl31_setup.c	\
+ 				common/fdt_fixup.c				\
++				drivers/arm/smmu/smmu_v3.c                      \
++				drivers/delay_timer/delay_timer.c		\
++				drivers/delay_timer/generic_delay_timer.c       \
+ 				${QEMU_GIC_SOURCES}
+ 
+ # CPU flag enablement
+diff --git a/plat/qemu/common/qemu_bl31_setup.c b/plat/qemu/common/qemu_bl31_setup.c
+index 1c5e0ea..08b8199 100644
+--- a/plat/qemu/common/qemu_bl31_setup.c
++++ b/plat/qemu/common/qemu_bl31_setup.c
+@@ -8,6 +8,8 @@
+ 
+ #include <common/bl_common.h>
+ #include <drivers/arm/pl061_gpio.h>
++#include <drivers/arm/smmu_v3.h>
++#include <drivers/generic_delay_timer.h>
+ #include <lib/gpt_rme/gpt_rme.h>
+ #include <lib/transfer_list.h>
+ #include <plat/common/platform.h>
+@@ -103,6 +105,8 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
+ 	sbsa_platform_init();
+ #endif
+ 
++	generic_delay_timer_init();
++
+ 	/*
+ 	 * Check params passed from BL2
+ 	 */
+@@ -287,6 +291,16 @@ void bl31_plat_arch_setup(void)
+ 		ERROR("gpt_runtime_init() failed!\n");
+ 		panic();
+ 	}
++
++	/* TODO: smmuv3 init can fail */
++	if (smmuv3_security_init(PLAT_QEMU_SMMUV3_BASE) != 0) {
++		ERROR("smmuv3_security_init() failed!\n");
++		panic();
++	}
++	if (smmuv3_init(PLAT_QEMU_SMMUV3_BASE) != 0) {
++		ERROR("smmuv3_security_init() failed!\n");
++		panic();
++	}
+ #endif /* ENABLE_RME */
+ 
+ }
+diff --git a/plat/qemu/qemu_sbsa/include/platform_def.h b/plat/qemu/qemu_sbsa/include/platform_def.h
+index 85bd233..e671bd8 100644
+--- a/plat/qemu/qemu_sbsa/include/platform_def.h
++++ b/plat/qemu/qemu_sbsa/include/platform_def.h
+@@ -476,6 +476,9 @@ CASSERT((PLAT_QEMU_L0_GPT_BASE & (PLAT_QEMU_L0_GPT_SIZE - 1)) == 0,
+ 
+ /* When RME is enabled, the base of NS DRAM is moved forward after the RMM */
+ #define NS_DRAM0_BASE_OFFSET	REALM_DRAM_SIZE
++
++#define PLAT_QEMU_SMMUV3_BASE              UL(0x60050000)
++#define PLAT_ARM_SMMUV3_ROOT_REG_OFFSET    UL(0x20000)
+ #endif /* !ENABLE_RME */
+ 
+ #endif /* PLATFORM_DEF_H */
+-- 
+2.47.3
+
