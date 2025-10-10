@@ -1,0 +1,43 @@
+From da4a3ee5dba2db2bbb0da06bc006021333a09e55 Mon Sep 17 00:00:00 2001
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 10 Oct 2025 11:57:47 -0600
+Subject: [PATCH] Properly set cmd and evt queue sizes based on available
+ memory
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ drivers/arm-smmuv3/src/arm-smmuv3.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/arm-smmuv3/src/arm-smmuv3.c b/drivers/arm-smmuv3/src/arm-smmuv3.c
+index e26d69cc..b821ca0b 100755
+--- a/drivers/arm-smmuv3/src/arm-smmuv3.c
++++ b/drivers/arm-smmuv3/src/arm-smmuv3.c
+@@ -730,14 +730,21 @@ static bool smmuv3_init_queues_tables()
+ 		return false;
+ 	}
+ 
+-	arm_smmuv3.device.cmdq_log2_sz = EXTRACT(CMDQ, idr1);
++	/*
++	 * Sizeof(cmdq_base) == 128, CMD_SIZE == 16, yielding 8 entries.
++	 * log2(8) == 3
++	 */
++	arm_smmuv3.device.cmdq_log2_sz = 3;
+ 	if(arm_smmuv3.device.cmdq_log2_sz > QUEUE_SZ_MAX) {
+ 		ERROR("SMMUv3: ERROR: CMDQ (log2) size cannot exceed %d\n", QUEUE_SZ_MAX);
+ 		return false;
+ 	}
+ 
+-
+-	arm_smmuv3.device.evtq_log2_sz = EXTRACT(EVTQ, idr1);
++	/*
++	 * Sizeof(evtq_base) == 32, EVT_RECORD_SIZE == 32, yielding 1 entry.
++	 * log2(1) == 0
++	 */
++	arm_smmuv3.device.evtq_log2_sz = 0;
+ 	if(arm_smmuv3.device.evtq_log2_sz > QUEUE_SZ_MAX) {
+ 		ERROR("SMMUv3: ERROR: EVTQ (log2) size cannot exceed %d\n", QUEUE_SZ_MAX);
+ 		return false;
+-- 
+GitLab
+

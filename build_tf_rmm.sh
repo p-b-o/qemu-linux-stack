@@ -16,7 +16,8 @@ clone()
         topics/da_alp12_v2 \
         patches/rmm-support-lower-pmu-versions.patch \
         patches/rmm-silence-Unhandled-read-write-regs-info.patch \
-        patches/rmm-arm-smmuv3-update-base-for-qemu.patch
+        patches/rmm-arm-smmuv3-update-base-for-qemu.patch \
+        patches/rmm-set-cmd-and-evt-queue-sizes-based-on-available-memory
 }
 
 build()
