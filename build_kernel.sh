@@ -13,12 +13,13 @@ clone()
     rm -f linux
     url=https://git.gitlab.arm.com/linux-arm/linux-cca.git
     version=cca/tdisp-upstream-post-v1.3
-    src=linux_$(echo $version | tr '/' '_')-device-assignment
+    src=linux_$(echo $version | tr '/' '_')-acs-device-assignment
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
         pushd $src.tmp
         git am ../patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
+        git am ../patches/linux-acs-override.patch
         popd
         mv $src.tmp $src
     fi
