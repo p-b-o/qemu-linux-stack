@@ -19,7 +19,8 @@ clone()
         patches/arm-trusted-firmware-support-move-manifest-definition.patch \
         patches/arm-trusted-firmware-add-pcie-root-information.patch \
         patches/arm-trusted-firmware-add-stubs-for-IDE-key-management.patch \
-        patches/arm-trusted-firmware-plat-qemu-initialize-smmuv3-with-RME.patch
+        patches/arm-trusted-firmware-plat-qemu-initialize-smmuv3-with-RME.patch \
+        patches/arm-trusted-firmware-add-device-non-coherent-map.patch
 }
 
 build()
