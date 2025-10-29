@@ -13,7 +13,7 @@ clone()
     rm -f arm-trusted-firmware
     url=https://github.com/ARM-software/arm-trusted-firmware
     version=v2.13.0
-    src=arm-trusted-firmware-$version-patch-tcr2-sctlr2-pie-gcs-smmu-sbsa-da
+    src=arm-trusted-firmware-$version-patch-tcr2-sctlr2-pie-gcs-smmu-sbsa-non-coherent-da
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
@@ -28,6 +28,8 @@ clone()
         git am ../patches/arm-trusted-firmware-support-PIE-GCS.patch
         # initialize smmuv3
         git am ../patches/arm-trusted-firmware-plat-qemu-initialize-smmuv3-with-RME.patch
+        # other patches
+        git am ../patches/arm-trusted-firmware-add-device-non-coherent-map.patch
         popd
         mv $src.tmp $src
     fi
