@@ -13,7 +13,8 @@ clone()
     ./clone.sh \
         spdm-emu \
         https://github.com/DMTF/spdm-emu \
-        3.8.0
+        3.8.0 \
+        patches/spdm-emu-set-interface-report-for-qemu-sata-device.patch
 }
 
 build()
