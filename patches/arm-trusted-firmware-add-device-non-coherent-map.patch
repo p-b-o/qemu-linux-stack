@@ -1,0 +1,83 @@
+From 95da69213ba2b5b029b90570b6f6c1bda6e3d392 Mon Sep 17 00:00:00 2001
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 28 Oct 2025 15:16:17 -0600
+Subject: [PATCH] feat(qemu): Add device non-coherent map
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ plat/qemu/common/qemu_common.c | 32 ++++++++++++++++++++++++++++----
+ 1 file changed, 28 insertions(+), 4 deletions(-)
+
+diff --git a/plat/qemu/common/qemu_common.c b/plat/qemu/common/qemu_common.c
+index eb1393a59eef..69bd12d29d00 100644
+--- a/plat/qemu/common/qemu_common.c
++++ b/plat/qemu/common/qemu_common.c
+@@ -304,7 +304,7 @@ const struct root_complex_info rc_data[] = {
+ /* Number of PCIe Root Complexes */
+ #define QEMU_RMM_RC_COUNT	ARRAY_SIZE(rc_data)
+ /* Number of device non-coherent address ranges */
+-#define QEMU_RMM_NCOH_REGIONS	0
++#define QEMU_RMM_NCOH_REGIONS	2
+ /* Number of device non-coherent address ranges */
+ #define QEMU_RMM_COH_REGIONS	0
+ /* Number of SMMUs */
+@@ -479,15 +479,14 @@ int plat_rmmd_load_manifest(struct rmm_manifest *manifest)
+ 	manifest->plat_data = (uintptr_t)NULL;
+ 	manifest->plat_dram.num_banks = num_banks;
+ 	manifest->plat_console.num_consoles = num_consoles;
++	manifest->plat_ncoh_region.num_banks = num_ncoh_regions;
+ 	manifest->plat_root_complex.num_root_complex = num_root_complex;
+ 	manifest->plat_root_complex.rc_info_version = PCIE_RC_INFO_VERSION;
+ 	manifest->plat_root_complex.padding = 0U; /* RES0 */
+ 
+-	/* Currently not supported */
+-	manifest->plat_ncoh_region.num_banks = num_ncoh_regions;
+-	manifest->plat_ncoh_region.banks = NULL;
+ 	manifest->plat_ncoh_region.checksum = 0UL;
+ 
++	/* Currently not supported */
+ 	manifest->plat_coh_region.num_banks = num_coh_regions;
+ 	manifest->plat_coh_region.banks = NULL;
+ 	manifest->plat_coh_region.checksum = 0UL;
+@@ -524,6 +523,7 @@ int plat_rmmd_load_manifest(struct rmm_manifest *manifest)
+ 	/* Things currently supported */
+ 	manifest->plat_dram.banks = bank_ptr;
+ 	manifest->plat_console.consoles = console_ptr;
++	manifest->plat_ncoh_region.banks = ncoh_region_ptr;
+ 	manifest->plat_root_complex.root_complex = root_complex_ptr;
+ 
+ 	/* Ensure the manifest is not larger than the shared buffer */
+@@ -595,6 +595,30 @@ int plat_rmmd_load_manifest(struct rmm_manifest *manifest)
+ 	/* Checksum must be 0 */
+ 	manifest->plat_console.checksum = ~checksum + 1UL;
+ 
++       /*
++         * Calculate the checksum of device non-coherent address ranges
++         * info structure
++         */
++        checksum = num_ncoh_regions + (uint64_t)ncoh_region_ptr;
++
++        /* Zero out the PCIe region info struct */
++        (void)memset((void *)ncoh_region_ptr, 0,
++                        sizeof(struct memory_bank) * num_ncoh_regions);
++
++	/* SBSA SBSA_PCIE_MMIO region */
++	ncoh_region_ptr[0].base = 0x80000000;
++        ncoh_region_ptr[0].size = 0x70000000;
++	/* SBSA SBSA_PCIE_MMIO_HIGH region */
++	ncoh_region_ptr[1].base = 0x100000000;
++        ncoh_region_ptr[1].size = 0xff00000000;
++
++        /* Update checksum */
++        checksum += checksum_calc((uint64_t *)ncoh_region_ptr,
++                        sizeof(struct memory_bank) * num_ncoh_regions);
++
++        /* Checksum must be 0 */
++        manifest->plat_ncoh_region.checksum = ~checksum + 1UL;
++
+ 	/* Calculate the checksum of the plat_root_complex structure */
+ 	checksum = num_root_complex + (uint64_t)root_complex_ptr;
+ 
+-- 
+2.43.0
+
