@@ -13,11 +13,12 @@ clone()
     rm -f spdm-emu
     url=https://github.com/DMTF/spdm-emu
     version=3.8.0
-    src=spdm-emu-$version
+    src=spdm-emu-$version-v2
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
         pushd $src.tmp
+        git am ../patches/spdm-emu-set-interface-report-for-qemu-sata-device.patch
         git submodule update --init --recursive --depth 1
         popd
         mv $src.tmp $src
