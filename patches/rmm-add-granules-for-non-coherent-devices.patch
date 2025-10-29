@@ -1,0 +1,28 @@
+From 2bafc4ef70c709f03467fb2b0a6e7f79ab0ff583 Mon Sep 17 00:00:00 2001
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 28 Oct 2025 15:42:12 -0600
+Subject: [PATCH] feat(qemu): Add granules for non-coherent devices
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ configs/qemu_sbsa_defcfg.cmake | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/configs/qemu_sbsa_defcfg.cmake b/configs/qemu_sbsa_defcfg.cmake
+index cc9ee8fe3493..99a8a8039845 100644
+--- a/configs/qemu_sbsa_defcfg.cmake
++++ b/configs/qemu_sbsa_defcfg.cmake
+@@ -48,6 +48,10 @@ arm_config_option_override(NAME RMM_FPU_USE_AT_REL2 DEFAULT OFF)
+ #
+ arm_config_option_override(NAME RMM_MAX_GRANULES DEFAULT 0x10040000)
+ 
++#
++#
++arm_config_option_override(NAME RMM_MAX_NCOH_GRANULES DEFAULT 0xff70000)
++
+ #
+ # TF-A sets a limit of 512 CPUs for the QEMU SBSA platform. See
+ # PLATFORM_MAX_CPUS_PER_CLUSTER and PLATFORM_CLUSTER_COUNT in file
+-- 
+2.43.0
+
