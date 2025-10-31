@@ -1,0 +1,70 @@
+From a5c9363a8612089b0fd6e57c41de852c802f7fbd Mon Sep 17 00:00:00 2001
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Thu, 30 Oct 2025 16:23:51 -0600
+Subject: [PATCH] feat(qemu): Add PAS for PCIe MMIO spaces
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ plat/qemu/common/qemu_bl31_setup.c              |  2 ++
+ plat/qemu/qemu_sbsa/include/platform_def.h      | 12 ++++++++++++
+ plat/qemu/qemu_sbsa/include/qemu_sbsa_pas_def.h |  8 ++++++++
+ 3 files changed, 22 insertions(+)
+
+diff --git a/plat/qemu/common/qemu_bl31_setup.c b/plat/qemu/common/qemu_bl31_setup.c
+index 08b819995d..6fdbdcc399 100644
+--- a/plat/qemu/common/qemu_bl31_setup.c
++++ b/plat/qemu/common/qemu_bl31_setup.c
+@@ -191,6 +191,8 @@ static pas_region_t pas_regions[] = {
+ 	QEMU_PAS_GPTS,
+ 	QEMU_PAS_REALM,
+ 	QEMU_PAS_NS0,
++	QEMU_PAS_PCI_MEM_1,
++	QEMU_PAS_PCI_MEM_2,
+ };
+ 
+ static void bl31_adjust_pas_regions(void)
+diff --git a/plat/qemu/qemu_sbsa/include/platform_def.h b/plat/qemu/qemu_sbsa/include/platform_def.h
+index e671bd802b..adccb44e44 100644
+--- a/plat/qemu/qemu_sbsa/include/platform_def.h
++++ b/plat/qemu/qemu_sbsa/include/platform_def.h
+@@ -239,6 +239,18 @@
+ #define DEVICE2_BASE			0x50000000
+ #define DEVICE2_SIZE			0x00001000
+ 
++/* PCI MMIO AREAS */
++#define SBSA_PCIE_MMIO_BASE		0x80000000
++#define SBSA_PCIE_MMIO_SIZE		0x70000000
++#define SBSA_PCIE_MMIO_HIGH_BASE     	0x100000000
++/*
++ * The second PCIE MMIO areas is 1020GB wide, which needs to be
++ * taken into account when computing the amount of granules needed
++ * to marshal that area.  10GB should be plenty and much easier to
++ * allocate granules for.
++ */
++#define SBSA_PCIE_MMIO_HIGH_SIZE	0x280000000
++
+ /*
+  * GIC related constants
+  * We use GICv3 where CPU Interface registers are not memory mapped
+diff --git a/plat/qemu/qemu_sbsa/include/qemu_sbsa_pas_def.h b/plat/qemu/qemu_sbsa/include/qemu_sbsa_pas_def.h
+index cf43a781eb..6e5de32a7c 100644
+--- a/plat/qemu/qemu_sbsa/include/qemu_sbsa_pas_def.h
++++ b/plat/qemu/qemu_sbsa/include/qemu_sbsa_pas_def.h
+@@ -57,6 +57,14 @@
+ 					       QEMU_PAS_RMM_SHARED_SIZE, \
+ 					       GPT_GPI_REALM)
+ 
++#define QEMU_PAS_PCI_MEM_1	GPT_MAP_REGION_GRANULE(SBSA_PCIE_MMIO_BASE, \
++						       SBSA_PCIE_MMIO_SIZE, \
++						       GPT_GPI_NS)
++
++#define QEMU_PAS_PCI_MEM_2	GPT_MAP_REGION_GRANULE(SBSA_PCIE_MMIO_HIGH_BASE, \
++						       SBSA_PCIE_MMIO_HIGH_SIZE, \
++						       GPT_GPI_NS)
++
+ /* Cover 4TB with L0GTP */
+ #define PLAT_QEMU_GPCCR_PPS	GPCCR_PPS_4TB
+ #define PLAT_QEMU_PPS		SZ_4T
+-- 
+GitLab
+
