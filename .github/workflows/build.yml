@@ -31,7 +31,7 @@ jobs:
       - run: echo "----- build latest QEMU -----"
       - run: sudo sed -i -e "s/ deb$/ deb deb-src/" /etc/apt/sources.list.d/ubuntu.sources
       - run: sudo apt update && sudo apt build-dep -y qemu
-      - run: git clone https://github.com/pbo-linaro/qemu --branch smmu-da-2025-11-05 --single-branch --depth 1
+      - run: git clone https://github.com/pbo-linaro/qemu --branch smmu-da-2026-01-20 --single-branch --depth 1
       - run: cd qemu && ./configure --target-list=aarch64-softmmu && ninja -C build && cd ..
 
       - run: echo "----- run nested guest and exit -----"
