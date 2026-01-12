@@ -14,7 +14,8 @@ clone()
         tf-rmm \
         https://github.com/TF-RMM/tf-rmm \
         481cb7f4 \
-        patches/rmm-support-lower-pmu-versions.patch
+        patches/rmm-support-lower-pmu-versions.patch \
+        patches/rmm-silence-Unhandled-read-write-regs-info.patch
 }
 
 build()
