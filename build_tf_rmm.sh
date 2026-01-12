@@ -13,7 +13,7 @@ clone()
     rm -f tf-rmm
     url=https://github.com/TF-RMM/tf-rmm
     version=481cb7f4
-    src=tf-rmm-main-s1pie
+    src=tf-rmm-main-s1pie-quiet-rmm
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url $src.tmp
@@ -21,6 +21,7 @@ clone()
         git checkout $version
         git submodule update --init --depth 1
         git am ../patches/rmm-support-lower-pmu-versions.patch
+        git am ../patches/rmm-silence-Unhandled-read-write-regs-info.patch
         popd
         mv $src.tmp $src
     fi
