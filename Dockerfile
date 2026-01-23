@@ -1,3 +1,7 @@
+FROM --platform=linux/amd64 docker.io/amd64/debian:trixie AS boot
+
+RUN apt update && apt install -y refind
+
 FROM docker.io/debian:trixie
 
 RUN apt update && apt install -y \
@@ -47,5 +51,11 @@ RUN mkdir /opt/compiler_wrappers && \
         chmod +x $f;\
     done
 ENV PATH=/opt/compiler_wrappers:$PATH
+
+RUN apt update && apt install -y dosfstools mtools parted fdisk
+# silence warnings with parted
+RUN ln -s /usr/bin/true /usr/bin/udevadm
+
+COPY --from=boot /usr/share/refind/refind/ /refind
 
 ENV LANG=en_US.UTF-8
