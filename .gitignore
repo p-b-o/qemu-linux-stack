@@ -13,6 +13,3 @@
 /xen*
 /h2*
 /out
-/uftrace.data
-/uftrace-web-viewer
-/uftrace-web-viewer-*
