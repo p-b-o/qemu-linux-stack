@@ -15,21 +15,6 @@ if ! [[ "$out" =~ .*.tar.xz ]]; then
 fi
 
 du -hc out/*
-<<<<<<< HEAD
 # create a sparse archive
-./container.sh tar cJvfS $out run.sh host.sh out/
-||||||| parent of ffce600 (x86_64: edk2 + linux + ubuntu)
-# create a sparse archive with:
-# - run.sh/host.sh scripts
-# - kernel
-# - guest rootfs
-# - host rootfs
-./container.sh tar cJvfS $out run.sh host.sh out/
-=======
-# create a sparse archive with:
-# - kernel
-# - guest rootfs
-# - host rootfs
-./container.sh tar cJvfS $out run.sh out/
->>>>>>> ffce600 (x86_64: edk2 + linux + ubuntu)
+./container.sh tar cJvfS $out run.sh io_benchmark.sh out/
 du -h $out
