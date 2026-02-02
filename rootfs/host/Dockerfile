@@ -7,6 +7,7 @@ RUN apt update && apt install -y \
     iputils-ping util-linux procps htop
 RUN apt update && apt install -y strace
 RUN apt update && apt install -y kmod
+RUN apt update && apt install -y fio
 RUN echo host > /hostname
 RUN mkdir /host
 COPY --from=common resolv.conf /etc/resolv.conf
