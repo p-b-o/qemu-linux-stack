@@ -31,17 +31,6 @@ Thus, update or switch branches should not require any ``git clean -ffdx``.
 ./run.sh /path/to/qemu-system-x86_64
 # exit QEMU with ctrl-a + x
 
-# debug kernel, firmwares and bootloader using lldb:
-./debug.sh /path/to/qemu-system-x86_64
-# use 'gui' command to display source code
-
-# debug from VS Code. Open current folder, install recommended extensions, then run:
-./vscode_debug.sh /path/to/qemu-system-x86_64
-# Then attach to QEMU using F5
-
-# to debug qemu itself:
-./run.sh gdb --args /path/to/qemu-system-x86_64
-
 # to create an archive containing the whole stack:
 ./build.sh
 ./archive_artifacts.sh stack.tar.xz
@@ -59,35 +48,3 @@ INIT=hostname ./run.sh qemu-system-x86_64
 # In case command fail, init will trigger a Kernel panic
 INIT='false' ./run.sh qemu-system-x86_64
 ```
-
-You can generate a [perfetto](https://perfetto.dev/) trace, based on
-QEMU [uftrace plugin](https://www.qemu.org/docs/master/about/emulation.html#uftrace).
-In this case, you need to use a QEMU compiled from source and master branch.
-
-```
-# generate a trace with timestamped execution
-./trace.sh /path/to/built/qemu-system-x86_64
-...
-1760047503.162041 NOTICE:  Booting Trusted Firmware
-1760047503.162544 NOTICE:  BL1: v2.13.0(debug):v2.13.0-2-gbaeb81f
-1760047503.162725 NOTICE:  BL1: Built : 16:35:42, Oct  7 2025
-1760047503.163462 INFO:    BL1: RAM 0xe0ee000 - 0xe0f6000
-...
-execution log is available in ./uftrace.data/exec.log
-
-# generate perfetto trace (compressed fuchsia trace) using uftrace
-from=1760047503.162041
-to=1760047503.163462
-./perfetto.sh $from $to ~/out.fxt.gz
-```
-
-Finally, you can open a web viewer for the full trace, automatically generating
-partial perfetto traces using:
-
-```
-./uftrace-web-viewer.sh
-```
-
-`perfetto.sh` and `uftrace-web-viewer.sh` are provided by
-[uftrace-web-viewer](https://github.com/p-b-o/uftrace-web-viewer), which is
-cloned automatically.
