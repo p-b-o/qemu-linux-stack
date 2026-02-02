@@ -19,5 +19,5 @@ du -hc out/*
 # - kernel
 # - guest rootfs
 # - host rootfs
-./container.sh tar cJvfS $out run.sh out/
+./container.sh tar cJvfS $out run.sh io_benchmark.sh out/
 du -h $out
