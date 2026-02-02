@@ -34,8 +34,11 @@ jobs:
       - run: git clone https://gitlab.com/qemu-project/qemu --branch v10.0.2 --single-branch --depth 1
       - run: cd qemu && ./configure --target-list=x86_64-softmmu && ninja -C build && cd ..
 
+      - run: echo "----- make /dev/kvm available -----"
+      - run: bash -c "[ -e /dev/kvm ] && sudo chown $USER:$USER /dev/kvm || true"
+
       - run: echo "----- run VM and exit -----"
-      - run: INIT='true' timeout 10m ./run.sh ./qemu/build/qemu-system-x86_64
+      - run: timeout 10m ./run.sh ./qemu/build/qemu-system-x86_64
 
       - run: echo "----- create artifacts ------"
       - run: echo $(basename ${{github.ref}}) > branch
