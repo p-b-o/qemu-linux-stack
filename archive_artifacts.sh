@@ -16,5 +16,4 @@ fi
 
 du -hc out/*
 # create a sparse archive
-./container.sh tar cJvfS $out run.sh host.sh out/
-du -h $out
+./container.sh tar cJvfS $out run.sh out/
