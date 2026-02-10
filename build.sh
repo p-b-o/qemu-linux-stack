@@ -15,12 +15,6 @@ if ! podman run -it --rm --platform linux/arm64 docker.io/arm64v8/debian:trixie 
     exit 1
 fi
 
-# host != x86_64
-if ! podman run -it --rm --platform linux/amd64 docker.io/amd64/debian:trixie true; then
-    echo "error: qemu-user-static must be installed on your machine"
-    exit 1
-fi
-
 ./container.sh ccache -M 50GB
 
 ./build_kernel.sh
