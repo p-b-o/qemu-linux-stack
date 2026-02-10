@@ -13,7 +13,7 @@ clone()
     rm -f linux
     url=https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
     version=v6.17
-    src=linux_$version
+    src=linux_${version}_riscv64
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
@@ -31,23 +31,24 @@ build()
 
     pushd $(readlink -f linux)
     rm -f .config
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig -j$(nproc)
+    make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- defconfig -j$(nproc)
     # reduce number of timer interrupts
     scripts/config --disable CONFIG_HZ_250
     scripts/config --enable CONFIG_HZ_100
     # nvme
     scripts/config --enable BLK_DEV_NVME
+    # /proc/sysrq-trigger
+    scripts/config --enable CONFIG_MAGIC_SYSRQ
     # iommufd
     # https://docs.kernel.org/driver-api/vfio.html#vfio-device-cdev
     scripts/config --enable IOMMUFD
     scripts/config --enable VFIO_DEVICE_CDEV
-    scripts/config --enable ARM_SMMU_V3_IOMMUFD
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config
 
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- olddefconfig -j$(nproc)
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all -j$(nproc)
+    make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- olddefconfig -j$(nproc)
+    make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- all -j$(nproc)
 
     # compile commands
     ./scripts/clang-tools/gen_compile_commands.py
@@ -56,7 +57,7 @@ build()
         -e 's/-fconserve-stack//' \
         -e 's/-fno-allow-store-data-races//' \
         -e 's/-mabi=lp64//' \
-        -e 's/aarch64-linux-gnu-gcc/clang -target aarch64-pc-none-gnu -Wno-unknown-warning-option -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang/'
+        -e 's/riscv64-linux-gnu-gcc/clang -target riscv64-pc-none-gnu -Wno-unknown-warning-option -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang/'
 
     popd
 
@@ -66,7 +67,7 @@ build()
 output()
 {
     mkdir -p out
-    rsync ./linux/arch/arm64/boot/Image.gz out/
+    rsync ./linux/arch/riscv/boot/Image out/
 }
 
 clone

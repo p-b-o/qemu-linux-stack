@@ -3,8 +3,8 @@ FROM docker.io/debian:trixie
 RUN apt update && apt install -y \
 build-essential \
 git \
-gcc-aarch64-linux-gnu \
-g++-aarch64-linux-gnu \
+gcc-riscv64-linux-gnu \
+g++-riscv64-linux-gnu \
 bison \
 flex \
 bc \
@@ -33,7 +33,7 @@ cd uftrace && git checkout 81fe3b94782 && \
 
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
 RUN mkdir /opt/compiler_wrappers && \
-    for c in gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \
+    for c in gcc g++ riscv64-linux-gnu-gcc riscv64-linux-gnu-g++; do \
         f=/opt/compiler_wrappers/$c && \
         echo '#!/usr/bin/env bash' >> $f && \
         echo 'args="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -g"' >> $f && \
