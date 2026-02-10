@@ -5,5 +5,7 @@
 /edk2*
 /kvmtool*
 /spdm-emu*
+/fvp*
+/opensbi*
 /out
 /uftrace.data
