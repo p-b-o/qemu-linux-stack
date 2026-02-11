@@ -7,5 +7,6 @@
 /spdm-emu*
 /fvp*
 /opensbi*
+/slof*
 /out
 /uftrace.data
