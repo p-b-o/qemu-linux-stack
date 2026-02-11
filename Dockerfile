@@ -4,8 +4,8 @@ RUN apt update && apt install -y \
 build-essential \
 binutils \
 git \
-gcc-aarch64-linux-gnu \
-g++-aarch64-linux-gnu \
+gcc-powerpc64-linux-gnu \
+gcc-powerpc64le-linux-gnu \
 bison \
 flex \
 bc \
@@ -40,13 +40,16 @@ RUN wget -q https://github.com/biomejs/biome/releases/download/@biomejs/biome@2.
 mv biome-linux-x64 /usr/bin/biome && chmod +x /usr/bin/biome
 
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
+# workaround issues when compiling some slof files
 RUN mkdir /opt/compiler_wrappers && \
-    for c in gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \
+    for c in gcc g++ powerpc64-linux-gnu-gcc powerpc64le-linux-gnu-gcc; do \
         f=/opt/compiler_wrappers/$c && \
         echo '#!/usr/bin/env bash' >> $f && \
-        echo 'args="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -g"' >> $f && \
+        echo 'args="-fno-omit-frame-pointer -g"' >> $f && \
         echo '[ "$CC_NO_DEBUG_MACROS" == "1" ] || args="$args -ggdb3"' >> $f && \
         echo '[[ "$*" =~ ' -E ' ]] && args=' >> $f && \
+        echo '[[ "$*" =~ 'lowmem.S' ]] && args=' >> $f && \
+        echo '[[ "$*" =~ 'brokensc1.c' ]] && args=' >> $f && \
         echo "exec ccache /usr/bin/$c \"\$@\" \$args" >> $f && \
         chmod +x $f;\
     done
