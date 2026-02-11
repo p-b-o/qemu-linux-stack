@@ -18,6 +18,7 @@ set -x
 -netdev user,id=vnet \
 -device virtio-net-pci,netdev=vnet \
 -cpu max \
+-M pseries \
 -smp 1 \
 -m 8G \
 -bios ./out/boot_rom.bin \
