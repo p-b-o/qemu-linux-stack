@@ -23,23 +23,30 @@ build()
 
     pushd $(readlink -f linux)
     rm -f .config
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig -j$(nproc)
+    make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- defconfig -j$(nproc)
     # reduce number of timer interrupts
     scripts/config --disable CONFIG_HZ_250
     scripts/config --enable CONFIG_HZ_100
     # nvme
     scripts/config --enable BLK_DEV_NVME
+    # virtio
+    scripts/config --enable VIRTIO_PCI
+    scripts/config --enable VIRTIO_PCI_LEGACY
+    scripts/config --enable VIRTIO_BLK
+    scripts/config --enable VIRTIO_NET
+    scripts/config --enable NET_9P_VIRTIO
+    scripts/config --enable NET_9P
+    scripts/config --enable 9P_FS
     # iommufd
     # https://docs.kernel.org/driver-api/vfio.html#vfio-device-cdev
     scripts/config --enable IOMMUFD
     scripts/config --enable VFIO_DEVICE_CDEV
-    scripts/config --enable ARM_SMMU_V3_IOMMUFD
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config
 
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- olddefconfig -j$(nproc)
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all -j$(nproc)
+    make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- olddefconfig -j$(nproc)
+    make ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- all -j$(nproc)
 
     # compile commands
     ./scripts/clang-tools/gen_compile_commands.py
@@ -48,7 +55,7 @@ build()
         -e 's/-fconserve-stack//' \
         -e 's/-fno-allow-store-data-races//' \
         -e 's/-mabi=lp64//' \
-        -e 's/aarch64-linux-gnu-gcc/clang -target aarch64-pc-none-gnu -Wno-unknown-warning-option -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang/'
+        -e 's/powerpc64le-linux-gnu-gcc/clang -target powerpc64le-pc-none-gnu -Wno-unknown-warning-option -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang/'
 
     popd
 
@@ -58,7 +65,7 @@ build()
 output()
 {
     mkdir -p out
-    rsync ./linux/arch/arm64/boot/Image.gz out/
+    rsync ./linux/arch/powerpc/boot/zImage out/
 }
 
 clone
