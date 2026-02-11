@@ -1,11 +1,11 @@
-FROM --platform=linux/arm64 docker.io/arm64v8/debian:trixie
+FROM --platform=linux/ppc64le docker.io/ppc64le/debian:trixie
 
 RUN apt update && apt install -y \
     bash-completion pciutils net-tools \
     iputils-ping util-linux procps htop
 RUN apt update && apt install -y \
     --no-install-recommends \
-    qemu-system-aarch64 ipxe-qemu
+    qemu-system-ppc64 ipxe-qemu
 RUN apt update && apt install -y strace
 RUN apt update && apt install -y kmod
 RUN echo host > /hostname
