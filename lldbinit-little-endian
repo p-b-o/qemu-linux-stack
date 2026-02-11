@@ -1,0 +1,5 @@
+target modules add linux/vmlinux
+target modules load --file vmlinux --slide 0
+b start_kernel
+# reached when VM powers off (end of test_debug.sh)
+b sys_off_notify
