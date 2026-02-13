@@ -1,0 +1,40 @@
+From c207e08403611689e3d91f32510f1f8514e581a0 Mon Sep 17 00:00:00 2001
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Thu, 12 Feb 2026 17:09:17 -0700
+Subject: [PATCH 2/2] lib/slot_buf: Fix 4 bytes read/write operations
+
+This currently reads/writes 2 bytes only (half-word). Fix it.
+
+Fixes: 51f46883ac9f ("feat(lib/slot_buf): add ns_mmio helpers")
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ lib/slot_buf/src/aarch64/ns_access.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/lib/slot_buf/src/aarch64/ns_access.S b/lib/slot_buf/src/aarch64/ns_access.S
+index ab98f7a..c00f972 100644
+--- a/lib/slot_buf/src/aarch64/ns_access.S
++++ b/lib/slot_buf/src/aarch64/ns_access.S
+@@ -88,8 +88,8 @@ endfunc memcpy_ns_write
+  * All arguments must be aligned to 4 bytes.
+  */
+ func memcpy_ns_read_4
+-	ldrh	w2, [x1]
+-	strh	w2, [x0]
++	ldr	w2, [x1]
++	str	w2, [x0]
+ 	mov	x0, #1
+ 	ret
+ endfunc memcpy_ns_read_4
+@@ -107,7 +107,7 @@ endfunc memcpy_ns_read_4
+  * All arguments must be aligned to 4 bytes.
+  */
+ func memcpy_ns_write_4
+-	strh	w1, [x0]
++	str	w1, [x0]
+ 	mov	x0, #1
+ 	ret
+ endfunc memcpy_ns_write_4
+-- 
+2.47.3
+

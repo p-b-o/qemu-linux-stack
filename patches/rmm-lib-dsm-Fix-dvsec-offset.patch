@@ -1,0 +1,29 @@
+From 2a84d49c077274e7f621ea33b1ac436897756e12 Mon Sep 17 00:00:00 2001
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Thu, 12 Feb 2026 17:09:15 -0700
+Subject: [PATCH 1/2] lib/dsm: Fix dvsec offset
+
+The offset in the capability list is raw offset, not an offset to the
+offset.
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ lib/dsm/src/dsm_dvsec_rme_da.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/dsm/src/dsm_dvsec_rme_da.c b/lib/dsm/src/dsm_dvsec_rme_da.c
+index 5a95b52..9a5849a 100644
+--- a/lib/dsm/src/dsm_dvsec_rme_da.c
++++ b/lib/dsm/src/dsm_dvsec_rme_da.c
+@@ -83,7 +83,7 @@ static unsigned int pcie_find_arm_dvsec(unsigned long rp_ecam_addr)
+ 		}
+ 
+ 		next_cap_offset = EXTRACT(PCIE_ECH_NEXT_CAP_OFFSET, ech);
+-		dvsec_offset += next_cap_offset;
++		dvsec_offset = next_cap_offset;
+ 	} while ((next_cap_offset != 0U) && (dvsec_offset < PCIE_ECAP_END));
+ 
+ 	return 0U;
+-- 
+2.47.3
+
