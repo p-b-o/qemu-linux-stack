@@ -13,7 +13,7 @@ clone()
     rm -f tf-rmm
     url=https://review.trustedfirmware.org/TF-RMM/tf-rmm.git
     version=topics/da_alp12_v2
-    src=tf-rmm-$(echo "$version" | tr '/' '_')-lower-pmu-versions-cmd-queue-granule-sbsa-device-assignment
+    src=tf-rmm-$(echo "$version" | tr '/' '_')-lower-pmu-versions-cmd-queue-granule-sbsa-device-assignment-fix-dvsec
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
@@ -25,6 +25,8 @@ clone()
         git am ../patches/rmm-arm-smmuv3-update-base-for-qemu.patch
         git am ../patches/rmm-set-cmd-and-evt-queue-sizes-based-on-available-memory
         git am ../patches/rmm-add-granules-for-non-coherent-devices.patch
+        git am ../patches/rmm-lib-dsm-Fix-dvsec-offset.patch
+        git am ../patches/rmm-lib-slot_buf-Fix-4-bytes-read-write-operations.patch
         popd
         mv $src.tmp $src
     fi
