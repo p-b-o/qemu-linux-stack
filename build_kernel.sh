@@ -14,8 +14,7 @@ clone()
         linux \
         https://gitlab.arm.com/linux-arm/linux-cca \
         cca/tdisp-upstream-post-v1.3 \
-        patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch \
-        patches/linux-acs-override.patch
+        patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
 }
 
 build()
