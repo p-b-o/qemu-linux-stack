@@ -18,7 +18,9 @@ clone()
         patches/rmm-silence-Unhandled-read-write-regs-info.patch \
         patches/rmm-arm-smmuv3-update-base-for-qemu.patch \
         patches/rmm-set-cmd-and-evt-queue-sizes-based-on-available-memory \
-        patches/rmm-add-granules-for-non-coherent-devices.patch
+        patches/rmm-add-granules-for-non-coherent-devices.patch \
+        patches/rmm-lib-dsm-Fix-dvsec-offset.patch \
+        patches/rmm-lib-slot_buf-Fix-4-bytes-read-write-operations.patch
 }
 
 build()
