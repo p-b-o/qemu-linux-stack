@@ -13,7 +13,7 @@ clone()
     ./clone.sh \
         u-boot \
         https://github.com/u-boot/u-boot \
-        v2025.04
+        v2026.01
 }
 
 build()

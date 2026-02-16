@@ -1,0 +1,29 @@
+From a65ad0c291619364bfd809105a98f428d4375310 Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@linaro.org>
+Date: Thu, 26 Feb 2026 10:02:00 -0800
+Subject: [PATCH] fix paths for teec and ckteec
+
+---
+ host/xtest/Makefile | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/host/xtest/Makefile b/host/xtest/Makefile
+index 18ffb7b..742126d 100644
+--- a/host/xtest/Makefile
++++ b/host/xtest/Makefile
+@@ -157,9 +157,10 @@ endif
+ 
+ CFLAGS += -g3
+ 
+-LDFLAGS += -L$(OPTEE_CLIENT_EXPORT)/lib -lteec
++LDFLAGS += -L$(OPTEE_CLIENT_EXPORT)/ -lteec
+ ifeq ($(CFG_PKCS11_TA),y)
+-LDFLAGS += -lckteec
++CFLAGS += -I$(OPTEE_CLIENT_EXPORT)/../libckteec/include
++LDFLAGS += -L$(OPTEE_CLIENT_EXPORT)/../libckteec -lckteec
+ endif
+ LDFLAGS += -lpthread -lm
+ 
+-- 
+2.47.3
+
