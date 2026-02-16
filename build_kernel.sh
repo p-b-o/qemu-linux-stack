@@ -11,8 +11,8 @@ fi
 clone()
 {
     rm -f linux
-    url=https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-    version=v6.17
+    url=https://github.com/torvalds/linux
+    version=v6.19
     src=linux_$version
     if [ ! -d $src ]; then
         rm -rf $src.tmp
@@ -42,6 +42,10 @@ build()
     scripts/config --enable IOMMUFD
     scripts/config --enable VFIO_DEVICE_CDEV
     scripts/config --enable ARM_SMMU_V3_IOMMUFD
+    # enable FFA transport to allow communication with optee
+    scripts/config --enable ARM_FFA_TRANSPORT
+    scripts/config --enable TEE
+    scripts/config --enable OPTEE
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config

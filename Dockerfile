@@ -32,9 +32,17 @@ RUN cd /tmp && git clone https://github.com/namhyung/uftrace && \
 cd uftrace && git checkout 81fe3b94782 && \
 ./configure && make -j $(nproc) && make install && rm -rf /tmp/*
 
+RUN apt update && apt install -y gpg curl python3-cryptography
+RUN cd /usr/bin && \
+wget https://storage.googleapis.com/git-repo-downloads/repo && \
+chmod +x repo
+RUN apt update && apt install -y clang llvm lld libc++-dev device-tree-compiler
+RUN apt update && apt install -y python3-pyelftools python3-venv ninja-build pkg-config python3-poetry
+RUN apt update && apt install -y cmake uuid-dev
+
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
 RUN mkdir /opt/compiler_wrappers && \
-    for c in gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \
+    for c in clang clang++ gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \
         f=/opt/compiler_wrappers/$c && \
         echo '#!/usr/bin/env bash' >> $f && \
         echo 'args="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -g"' >> $f && \
