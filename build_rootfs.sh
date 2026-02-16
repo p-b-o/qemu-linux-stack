@@ -23,4 +23,3 @@ build()
 }
 
 build host
-build guest
