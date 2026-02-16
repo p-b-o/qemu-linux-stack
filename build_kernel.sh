@@ -11,7 +11,7 @@ fi
 clone()
 {
     rm -f linux
-    url=https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+    url=https://github.com/torvalds/linux
     version=v6.17
     src=linux_$version
     if [ ! -d $src ]; then

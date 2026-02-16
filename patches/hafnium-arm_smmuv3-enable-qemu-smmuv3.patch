@@ -1,0 +1,49 @@
+From e75356ed860f5406c2f1ff91d8924b361706b69b Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@linaro.org>
+Date: Tue, 17 Feb 2026 01:23:48 -0800
+Subject: [PATCH] src/arch/aarch64/arm_smmuv3: enable qemu smmuv3
+
+---
+ src/BUILD.gn                         | 3 +--
+ src/arch/aarch64/arm_smmuv3/args.gni | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/src/BUILD.gn b/src/BUILD.gn
+index c33d44a..02c701b 100644
+--- a/src/BUILD.gn
++++ b/src/BUILD.gn
+@@ -36,9 +36,9 @@ source_set("src_not_testable_yet") {
+     ":src_testable",
+     "//project/${project}/${plat_name}",
+     "//src/arch/${plat_arch}/hypervisor:other_world",
++    "//src/arch/aarch64/arm_smmuv3",
+     plat_boot_flow,
+     plat_console,
+-    plat_iommu,
+   ]
+ }
+ 
+@@ -77,7 +77,6 @@ source_set("src_testable") {
+     plat_boot_flow,
+     plat_console,
+     plat_interrupts,
+-    plat_iommu,
+     plat_memory_protect,
+   ]
+ }
+diff --git a/src/arch/aarch64/arm_smmuv3/args.gni b/src/arch/aarch64/arm_smmuv3/args.gni
+index 942e2e9..6b5bb09 100644
+--- a/src/arch/aarch64/arm_smmuv3/args.gni
++++ b/src/arch/aarch64/arm_smmuv3/args.gni
+@@ -5,6 +5,6 @@
+ # https://opensource.org/licenses/BSD-3-Clause.
+ 
+ declare_args() {
+-  smmu_base_address = ""
+-  smmu_memory_size = ""
++  smmu_base_address = "0x09050000"
++  smmu_memory_size = "0x00020000"
+ }
+-- 
+2.47.3
+
