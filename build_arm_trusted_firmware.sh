@@ -12,14 +12,13 @@ clone()
 {
     rm -f arm-trusted-firmware
     url=https://github.com/ARM-software/arm-trusted-firmware
-    version=v2.13.0
-    src=arm-trusted-firmware-$version-patch-tcr2-sctlr2-pie-gcs
+    version=v2.14.0
+    src=arm-trusted-firmware-$version-hafnium-optee
     if [ ! -d $src ]; then
         rm -rf $src.tmp
         git clone $url --single-branch --branch $version --depth 1 $src.tmp
         pushd $src.tmp
-        git am ../patches/arm-trusted-firmware-support-FEAT_TCR2-and-FEAT-SCTLR2.patch
-        git am ../patches/arm-trusted-firmware-support-PIE-GCS.patch
+        git submodule update --init
         popd
         mv $src.tmp $src
     fi
@@ -33,7 +32,20 @@ build()
     git clean -ffdx
     intercept-build --append \
     make PLAT=qemu QEMU_USE_GIC_DRIVER=QEMU_GICV3 \
+         SPD=spmd \
+         ENABLE_FEAT_SEL2=1 \
+         SP_LAYOUT_FILE=../optee-build/qemu_v8/sp_layout.json \
+         NEED_FDT=yes \
+         BL32_RAM_LOCATION=tdram \
+         ENABLE_FEAT_MTE2=2 \
+         BRANCH_PROTECTION=1 \
+         ENABLE_SME_FOR_NS=2 ENABLE_SME_FOR_SWD=1 \
+         ENABLE_SVE_FOR_NS=2 ENABLE_SVE_FOR_SWD=1 \
+         ENABLE_FEAT_FGT=2 ENABLE_FEAT_HCX=2 ENABLE_FEAT_ECV=2 \
+         BL32=../hafnium/out/reference/secure_qemu_aarch64_clang/hafnium.bin \
          BL33=../u-boot/u-boot.bin \
+         QEMU_TOS_FW_CONFIG_DTS=../optee-build/qemu_v8/spmc_el2_manifest.dts \
+         QEMU_TB_FW_CONFIG_DTS=../optee-build/qemu_v8/tb_fw_config.dts \
          LOG_LEVEL=40 \
          DEBUG=1 \
          all fip -j$(nproc)
