@@ -9,15 +9,18 @@ fi
 
 set -x
 
-[ -v INIT ] || INIT=
+[ -v INIT ] || INIT='/host/host.sh'
 
+# second serial is for secure world, we alias it to stdout
 "$@" \
 -nodefaults \
 -display none \
 -serial mon:stdio \
+-serial file:/dev/stdout \
 -netdev user,id=vnet \
 -device virtio-net-pci,netdev=vnet \
--M virt,secure=on,virtualization=on,gic-version=3,iommu=smmuv3 \
+-M virt,secure=on,virtualization=on,gic-version=3,iommu=smmuv3,mte=on \
+-global arm-smmuv3.secure-impl=on \
 -cpu max \
 -smp 1 \
 -m 8G \
