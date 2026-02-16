@@ -21,6 +21,20 @@ fi
 echo '-------------------------------------------------------------------------'
 ./build_uboot.sh
 echo '-------------------------------------------------------------------------'
+# Various device tree for building optee
+./build_optee_build.sh
+echo '-------------------------------------------------------------------------'
+# tee binary running at S-EL1
+./build_optee_os.sh
+echo '-------------------------------------------------------------------------'
+# Normal world user space daemon and libraries for apps
+./build_optee_client.sh
+echo '-------------------------------------------------------------------------'
+# Needs optee-client and optee-os
+./build_optee_examples.sh
+echo '-------------------------------------------------------------------------'
+./build_hafnium.sh
+echo '-------------------------------------------------------------------------'
 ./build_arm_trusted_firmware.sh
 echo '-------------------------------------------------------------------------'
 ./build_rootfs.sh

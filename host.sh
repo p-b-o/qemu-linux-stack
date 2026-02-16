@@ -4,25 +4,18 @@ set -euo pipefail
 
 cd /host
 
-if [ $# -lt 1 ]; then
-    echo "usage: qemu_aarch64_cmd"
-    exit 1
-fi
-
 set -x
 
-[ -v INIT ] || INIT=
+# check optee is available
+dmesg | grep -i optee
+ls /dev/tee*
 
-"$@" \
--netdev user,id=vnet \
--device virtio-net-pci,netdev=vnet \
--M virt \
--display none \
--serial stdio \
--cpu host \
--enable-kvm \
--m 2G \
--kernel ./out/Image.gz \
--drive format=raw,file=./out/guest.ext4,if=virtio \
--append "nokaslr root=/dev/vda rw init=/init -- $INIT" \
--virtfs local,path=$(pwd)/,mount_tag=host,security_model=mapped,readonly=off
+# copy ta app in expected location
+rm -rf /lib/optee_armtz
+mkdir -p /lib/optee_armtz
+cp -r /host/out/optee_app/*.ta /lib/optee_armtz
+# launch user space daemon
+/host/out/tee-supplicant --daemonize
+
+# run (normal world) app
+/host/out/optee_app/optee_example_hello_world
