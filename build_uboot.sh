@@ -12,7 +12,7 @@ clone()
 {
     rm -f u-boot
     url=https://github.com/u-boot/u-boot
-    version=v2025.04
+    version=v2026.01
     src=u-boot-$version
     if [ ! -d $src ]; then
         rm -rf $src.tmp
