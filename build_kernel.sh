@@ -13,7 +13,7 @@ clone()
     ./clone.sh \
         linux \
         https://github.com/torvalds/linux \
-        v6.17 \
+        v6.19 \
         patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
 }
 
@@ -36,6 +36,10 @@ build()
     scripts/config --enable ARM_SMMU_V3_IOMMUFD
     # speed up boot by disabling ftrace
     scripts/config --disable CONFIG_FTRACE
+    # enable FFA transport to allow communication with optee
+    scripts/config --enable ARM_FFA_TRANSPORT
+    scripts/config --enable TEE
+    scripts/config --enable OPTEE
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config

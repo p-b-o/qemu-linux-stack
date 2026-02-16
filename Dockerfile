@@ -54,9 +54,20 @@ RUN apt update && apt install -y lldb-${LLVM_VERSION} llvm-${LLVM_VERSION}
 RUN ln -sf /usr/bin/llvm-nm-${LLVM_VERSION} /usr/bin/nm
 RUN ln -sf /usr/bin/llvm-addr2line-${LLVM_VERSION} /usr/bin/addr2line
 
+RUN apt update && apt install -y gpg curl python3-cryptography
+RUN cd /usr/bin && \
+wget https://storage.googleapis.com/git-repo-downloads/repo && \
+chmod +x repo
+RUN apt update && apt install -y clang llvm lld libc++-dev device-tree-compiler
+RUN apt update && apt install -y python3-pyelftools python3-venv ninja-build pkg-config python3-poetry
+RUN apt update && apt install -y cmake uuid-dev
+
+RUN dpkg --add-architecture arm64
+RUN apt update && apt install -y libssl-dev:arm64
+
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
 RUN mkdir /opt/compiler_wrappers && \
-    for c in gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \
+    for c in clang clang++ gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \
         f=/opt/compiler_wrappers/$c && \
         echo '#!/usr/bin/env bash' >> $f && \
         echo 'args="-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -g"' >> $f && \

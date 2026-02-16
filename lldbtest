@@ -8,6 +8,10 @@ c
 c
 # bl31.elf`bl31_main
 c
+# hafnium.elf`image_entry
+c
+# tee.elf`_start
+c
 # u-boot`board_init_f
 c
 # vmlinux`start_kernel
