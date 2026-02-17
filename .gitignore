@@ -8,5 +8,7 @@
 /fvp*
 /opensbi*
 /slof*
+/optee*
+/hafnium*
 /out
 /uftrace.data
