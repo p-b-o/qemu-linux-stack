@@ -15,6 +15,7 @@ cpio \
 wget \
 qemu-user \
 gdb-multiarch \
+parallel \
 cgdb
 RUN apt update && apt install -y \
 e2fsprogs libarchive13t64 locales-all
