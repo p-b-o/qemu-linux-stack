@@ -14,9 +14,9 @@ pushd fvp
 ../clone.sh \
     rmm \
     https://git.trustedfirmware.org/TF-RMM/tf-rmm.git \
-    topics/da_alp12_v2
+    431184a0b37
 
-# https://git.trustedfirmware.org/plugins/gitiles/TF-RMM/tf-rmm.git/+/refs/heads/topics/da_alp12_v2/docs/getting_started/building-with-shrinkwrap.rst
+# https://git.trustedfirmware.org/plugins/gitiles/TF-RMM/tf-rmm.git/+/refs/heads/main/docs/getting_started/building-with-shrinkwrap.rst
 pushd rmm
 export PATH=${PWD}/../shrinkwrap/shrinkwrap:$PATH
 export SHRINKWRAP_CONFIG=${PWD}/tools/shrinkwrap/configs
