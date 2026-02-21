@@ -33,11 +33,26 @@ if [ ! -f $uftrace_symbols ]; then
     exit 1
 fi
 
-set -x
+get_binaries()
+{
+    cat gdbinit | grep '^add-symbol-file' | sed -e 's/add-symbol-file\s*//' |
+    while read line; do
+        line="$line "
+        path=$(echo "$line" | cut -f 1 -d ' ')
+        # use canonical path to avoid symlinks in debug info
+        path=$(readlink -f "$path")
+        offset=$(echo "$line" | cut -f 2 -d ' ')
+        if [ "$offset" != "" ]; then
+            offset=":$offset"
+        fi
+        echo $path$offset
+    done
+}
 
+binaries=$(get_binaries)
+
+set -x
 rm -rf ./uftrace.data
-binaries=$(cat gdbinit | grep '^add-symbol-file' |
-           sed -e 's/add-symbol-file\s*//' -e 's/\s\+/:/')
 ./container.sh $uftrace_symbols --prefix-symbols $binaries
 
 qemu_cmd=$*
