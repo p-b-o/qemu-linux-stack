@@ -1,24 +1,25 @@
-From 2a84d49c077274e7f621ea33b1ac436897756e12 Mon Sep 17 00:00:00 2001
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Thu, 12 Feb 2026 17:09:15 -0700
-Subject: [PATCH 1/2] lib/dsm: Fix dvsec offset
+From 9714fc070bb5a6993ffec7ad12450e998a5aa517 Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@linaro.org>
+Date: Mon, 23 Feb 2026 10:10:55 -0800
+Subject: [PATCH] lib/dsm: Fix dvsec offset From: Viresh Kumar
+ <viresh.kumar@linaro.org>
 
 The offset in the capability list is raw offset, not an offset to the
 offset.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- lib/dsm/src/dsm_dvsec_rme_da.c | 2 +-
+ app/device_assignment/el0_app/src/rme_dvsec.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/dsm/src/dsm_dvsec_rme_da.c b/lib/dsm/src/dsm_dvsec_rme_da.c
-index 5a95b52..9a5849a 100644
---- a/lib/dsm/src/dsm_dvsec_rme_da.c
-+++ b/lib/dsm/src/dsm_dvsec_rme_da.c
-@@ -83,7 +83,7 @@ static unsigned int pcie_find_arm_dvsec(unsigned long rp_ecam_addr)
+diff --git a/app/device_assignment/el0_app/src/rme_dvsec.c b/app/device_assignment/el0_app/src/rme_dvsec.c
+index 1474494..adab561 100644
+--- a/app/device_assignment/el0_app/src/rme_dvsec.c
++++ b/app/device_assignment/el0_app/src/rme_dvsec.c
+@@ -94,7 +94,7 @@ static unsigned int pcie_find_arm_dvsec(struct dev_assign_info *info,
  		}
  
- 		next_cap_offset = EXTRACT(PCIE_ECH_NEXT_CAP_OFFSET, ech);
+ 		next_cap_offset = (uint16_t)EXTRACT(PCIE_ECH_NEXT_CAP_OFFSET, ech);
 -		dvsec_offset += next_cap_offset;
 +		dvsec_offset = next_cap_offset;
  	} while ((next_cap_offset != 0U) && (dvsec_offset < PCIE_ECAP_END));
