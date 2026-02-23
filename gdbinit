@@ -28,4 +28,11 @@ b DxeMain
 add-symbol-file ./linux/vmlinux
 b start_kernel
 
+b xlat_low_va_dyn_setup
+b xlat_ctx_cfg_init
+c
+c
+c
+c
+c
 c
