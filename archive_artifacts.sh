@@ -15,10 +15,6 @@ if ! [[ "$out" =~ .*.tar.xz ]]; then
 fi
 
 du -hc out/*
-# create a sparse archive with:
-# - run.sh/host.sh scripts
-# - kernel
-# - guest rootfs
-# - host rootfs
+# create a sparse archive
 ./container.sh tar cJvfS $out run.sh host.sh out/
 du -h $out
