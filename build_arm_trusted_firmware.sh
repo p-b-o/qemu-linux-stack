@@ -13,7 +13,7 @@ clone()
     ./clone.sh \
         arm-trusted-firmware \
         https://github.com/ARM-software/arm-trusted-firmware \
-        v2.13.0 \
+        v2.14.0 \
         patches/arm-trusted-firmware-support-FEAT_TCR2-and-FEAT-SCTLR2.patch \
         patches/arm-trusted-firmware-support-PIE-GCS.patch \
         patches/arm-trusted-firmware-support-move-manifest-definition.patch \
