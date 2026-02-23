@@ -14,7 +14,6 @@ clone()
         arm-trusted-firmware \
         https://github.com/ARM-software/arm-trusted-firmware \
         v2.14.0 \
-        patches/arm-trusted-firmware-support-FEAT_TCR2-and-FEAT-SCTLR2.patch \
         patches/arm-trusted-firmware-support-PIE-GCS.patch \
         patches/arm-trusted-firmware-support-move-manifest-definition.patch \
         patches/arm-trusted-firmware-add-pcie-root-information.patch \
