@@ -16,7 +16,6 @@ clone()
         431184a0b37 \
         patches/rmm-support-lower-pmu-versions.patch \
         patches/rmm-silence-Unhandled-read-write-regs-info.patch \
-        patches/rmm-arm-smmuv3-update-base-for-qemu.patch \
         patches/rmm-set-cmd-and-evt-queue-sizes-based-on-available-memory \
         patches/rmm-add-granules-for-non-coherent-devices.patch \
         patches/rmm-lib-dsm-Fix-dvsec-offset.patch \
