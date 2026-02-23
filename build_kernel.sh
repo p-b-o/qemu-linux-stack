@@ -10,19 +10,11 @@ fi
 
 clone()
 {
-    rm -f linux
-    url=https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-    version=v6.17
-    src=linux_$version
-    if [ ! -d $src ]; then
-        rm -rf $src.tmp
-        git clone $url --single-branch --branch $version --depth 1 $src.tmp
-        pushd $src.tmp
-        git am ../patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
-        popd
-        mv $src.tmp $src
-    fi
-    ln -s $src linux
+    ./clone.sh \
+        linux \
+        https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git \
+        v6.17 \
+        patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
 }
 
 build()
