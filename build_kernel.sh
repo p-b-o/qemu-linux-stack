@@ -13,7 +13,7 @@ clone()
     ./clone.sh \
         linux \
         https://gitlab.arm.com/linux-arm/linux-cca \
-        cca/tdisp-upstream-post-v1.3 \
+        cca/topics/cca-tdisp-integration-v2 \
         patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
 }
 
