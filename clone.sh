@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-set -x
 
 if [ $# -lt 3 ]; then
     echo "usage: name repository_url version [patches...]"
@@ -25,6 +24,7 @@ unique_identifier()
 }
 id=$(unique_identifier | sha1sum | cut -c 1-9)
 
+set -x
 src=$name-$id
 
 rm -f $name
