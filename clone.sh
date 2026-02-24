@@ -24,6 +24,17 @@ unique_identifier()
 }
 id=$(unique_identifier | sha1sum | cut -c 1-9)
 
+cache_identifier()
+{
+    echo "$url"
+    echo "$version"
+}
+cache_id=$(cache_identifier | sha1sum | cut -c 1-9)
+
+cache=$HOME/.cache/qemu-linux-stack/clone
+mkdir -p $cache
+cache=$cache/$cache_id
+
 set -x
 src=$name-$id
 
@@ -31,11 +42,17 @@ rm -f $name
 
 if [ ! -d $src ]; then
     rm -rf $src.tmp
-    if git ls-remote $url $version --exit-code; then
-        git clone $url --single-branch --branch $version --depth 1 $src.tmp
-    else
-        git clone $url $src.tmp
+    if [ ! -d $cache ]; then
+        rm -rf $cache.tmp
+        git clone --single-branch --branch $version --depth 1 $url $cache.tmp ||
+        git clone $url $cache.tmp
+        pushd $cache.tmp
+        git checkout $version
+        git submodule update --init --depth 1 -j $(nproc)
+        popd
+        mv $cache.tmp $cache
     fi
+    rsync -a $cache/ $src.tmp/
 
     pushd $src.tmp
     git checkout $version
@@ -46,8 +63,6 @@ if [ ! -d $src ]; then
     done
 
     pushd $src.tmp
-    git submodule init
-    git submodule update --depth 1 -j $(nproc)
     popd
     mv $src.tmp $src
 fi
