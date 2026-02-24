@@ -23,6 +23,9 @@ export SHRINKWRAP_CONFIG=${PWD}/tools/shrinkwrap/configs
 export WORKSPACE=${PWD}/../
 export SHRINKWRAP_BUILD=${WORKSPACE}
 export SHRINKWRAP_PACKAGE=${SHRINKWRAP_BUILD}/package
+
+# need to install some dependencies:
+# https://shrinkwrap.docs.arm.com/en/latest/userguide/quickstart.html#install-shrinkwrap
 shrinkwrap --runtime podman build cca-3world.yaml --overlay=cca_da.yaml --btvar GUEST_ROOTFS='${artifact:BUILDROOT}' --btvar RMM_SRC=${PWD} --no-sync=rmm
 popd
 
