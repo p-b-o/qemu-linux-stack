@@ -22,6 +22,7 @@ jobs:
 
       - run: echo "----- build stack -----"
       - run: sudo apt update && sudo apt install -y podman qemu-user-static
+
       - run: ./build.sh
       - run: ./archive_artifacts.sh .build.tar.xz
       # delete and restore built files - ensure we are self contained
@@ -47,3 +48,22 @@ jobs:
 
       - run: echo "----- push artifacts to "build" release -----"
       - run: gh release upload --clobber build $(cat branch)-$(cat version).tar.xz
+
+  fvp:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "----- more disk space -----"
+      - run: sudo rm -rf /opt/ /usr/local/.ghcup /usr/local/lib/android
+
+      - uses: actions/checkout@v4
+      - run: git config --global user.name "GitHub"
+      - run: git config --global user.email git@github.com
+
+      - run: echo "----- FVP -----"
+      - run: sudo apt update && sudo apt install -y podman qemu-user-static
+      # https://shrinkwrap.docs.arm.com/en/latest/userguide/quickstart.html#install-shrinkwrap
+      - run: sudo apt update && sudo apt install -y git netcat-openbsd python3 python3-pip telnet
+      - run: sudo pip3 install pyyaml termcolor tuxmake --break-system-packages
+      - run: ./fvp_build.sh
+      - run: sudo apt update && sudo apt install -y fuse2fs fuse3
+      - run: timeout 30m ./fvp_run.sh
