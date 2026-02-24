@@ -12,7 +12,7 @@ clone()
 {
     ./clone.sh \
         linux \
-        https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git \
+        https://github.com/torvalds/linux \
         v6.17 \
         patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
 }
