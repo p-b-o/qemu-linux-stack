@@ -13,7 +13,8 @@ clone()
     ./clone.sh \
         hafnium \
         https://github.com/TF-Hafnium/hafnium \
-        v2.14
+        v2.14 \
+        patches/hafnium-enable-secure-smmuv3.patch
 }
 
 build()
