@@ -19,7 +19,8 @@ set -x
 -serial file:/dev/stdout \
 -netdev user,id=vnet \
 -device virtio-net-pci,netdev=vnet \
--M virt,secure=on,virtualization=on,gic-version=3,iommu=smmuv3 \
+-M virt,secure=on,virtualization=on,gic-version=3,iommu=smmuv3,mte=on \
+-global arm-smmuv3.secure-impl=on \
 -cpu max \
 -smp 1 \
 -m 8G \
