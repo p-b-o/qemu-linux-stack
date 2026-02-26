@@ -14,6 +14,11 @@ clone()
         hafnium \
         https://github.com/TF-Hafnium/hafnium \
         v2.14
+
+    pushd hafnium
+    # deactivate mte
+    sed -i -e 's/enable_mte = "1"/enable_mte = "0"/' project/reference/BUILD.gn
+    popd
 }
 
 build()
