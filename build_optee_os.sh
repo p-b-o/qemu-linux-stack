@@ -31,7 +31,7 @@ build()
     DEBUG=1 \
     CFG_TA_PAUTH=n \
     CFG_CORE_PAUTH=n \
-    CFG_MEMTAG=y \
+    CFG_MEMTAG=n \
     CFG_TEE_CORE_NB_CORE=1 \
     CFG_ARM64_core=y \
     CFG_USER_TA_TARGETS=ta_arm64 \
