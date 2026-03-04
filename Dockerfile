@@ -24,12 +24,14 @@ libgnutls28-dev
 RUN apt update && apt install -y ccache
 RUN apt update && apt install -y clang-tools
 RUN ln -s /usr/bin/intercept-build-* /usr/bin/intercept-build
+RUN apt update && apt install -y pigz
 
 # Need recent uftrace, which implements dump --srcline (81fe3b94782)
-# uftrace v0.19 will contain the needed changes.
-RUN apt update && apt install -y pigz
+# uftrace v0.19 contains the needed changes.
+RUN sed -e 's/Types: deb/Types: deb deb-src/' -i /etc/apt/sources.list.d/debian.sources
+RUN apt update && apt build-dep -y uftrace
 RUN cd /tmp && git clone https://github.com/namhyung/uftrace && \
-cd uftrace && git checkout 81fe3b94782 && \
+cd uftrace && git checkout v0.19 && \
 ./configure && make -j $(nproc) && make install && rm -rf /tmp/*
 
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
