@@ -57,7 +57,7 @@ INIT='env INIT=hostname /host/host.sh qemu-system-aarch64' ./run.sh qemu-system-
 INIT='false' ./run.sh qemu-system-aarch64
 ```
 
-Finally, you can generate a [perfetto](https://perfetto.dev/) trace, based on
+You can generate a [perfetto](https://perfetto.dev/) trace, based on
 QEMU [uftrace plugin](https://www.qemu.org/docs/master/about/emulation.html#uftrace).
 In this case, you need to use a QEMU compiled from source and master branch.
 
@@ -76,6 +76,12 @@ execution log is available in ./uftrace.data/exec.log
 from=1760047503.162041
 to=1760047503.163462
 ./perfetto.sh $from $to ~/out.json.gz
+```
+
+Finally, you can open a web viewer for full trace using:
+
+```
+./uftrace-web-viewer.sh
 ```
 
 ---

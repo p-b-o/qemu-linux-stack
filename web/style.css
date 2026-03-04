@@ -1,0 +1,41 @@
+.event {
+	text-decoration: none;
+	color: black;
+}
+.event:hover {
+	text-decoration: underline;
+	background: #ffcccc;
+}
+.left {
+	position: static;
+	padding: 0px;
+	margin: 0px;
+}
+.right {
+	height: 65vh;
+	position: static;
+	overflow-y: auto;
+	overflow-x: auto;
+	margin: 0px;
+	padding: 0px;
+}
+.viewer {
+	height: 65vh;
+	width: 75vw;
+	margin: 0px;
+	padding: 0px;
+}
+.embedded_source_viewer {
+	width: 99vw;
+	height: 30vh;
+}
+.fullscreen_source_viewer {
+	width: 99vw;
+	height: 95vh;
+}
+.main_event {
+	background: #ff7777;
+}
+.included_event {
+	background: #dddddd;
+}

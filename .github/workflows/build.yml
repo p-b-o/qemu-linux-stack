@@ -20,6 +20,9 @@ jobs:
       - run: git config --global user.name "GitHub"
       - run: git config --global user.email git@github.com
 
+      - run: echo "----- web -----"
+      - run: ./web/check.sh
+
       - run: echo "----- build stack -----"
       - run: sudo apt update && sudo apt install -y podman qemu-user-static
       - run: ./build.sh
