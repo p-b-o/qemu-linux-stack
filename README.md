@@ -78,7 +78,8 @@ to=1760047503.163462
 ./perfetto.sh $from $to ~/out.json.gz
 ```
 
-Finally, you can open a web viewer for full trace using:
+Finally, you can open a web viewer for the full trace, automatically generating
+partial perfetto traces using:
 
 ```
 ./uftrace-web-viewer.sh
