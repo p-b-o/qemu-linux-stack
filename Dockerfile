@@ -31,8 +31,8 @@ RUN apt update && apt install -y pigz
 # uftrace v0.19 contains the needed changes.
 RUN sed -e 's/Types: deb/Types: deb deb-src/' -i /etc/apt/sources.list.d/debian.sources
 RUN apt update && apt build-dep -y uftrace
-RUN cd /tmp && git clone https://github.com/namhyung/uftrace && \
-cd uftrace && git checkout v0.19 && \
+RUN cd /tmp && git clone https://github.com/p-b-o/uftrace && \
+cd uftrace && git checkout d6d243b67183624b6ad07ab77bf419b08ae4a4bb && \
 ./configure && make -j $(nproc) && make install && rm -rf /tmp/*
 
 RUN apt update && apt install -y black mypy node-typescript
