@@ -2,6 +2,7 @@ FROM docker.io/debian:trixie
 
 RUN apt update && apt install -y \
 build-essential \
+binutils \
 git \
 gcc-aarch64-linux-gnu \
 g++-aarch64-linux-gnu \
