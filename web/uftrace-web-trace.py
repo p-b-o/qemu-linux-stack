@@ -95,19 +95,6 @@ def generate_traces(traces: list[Subtrace], traces_dir: str) -> None:
             print(f"[{i + 1}/{num_traces}] {cmd}")
 
 
-def check_uftrace() -> None:
-    out = subprocess.check_output(["uftrace", "--version"], text=True)
-    version = out.strip().split(" ")[1]
-    assert version[0] == "v"
-    version = version[1:]
-    minor, major = list(map(lambda v: int(v), version.split(".")))
-    if minor > 0:
-        return
-    # uftrace can dump srcline in chrome traces from 0.19
-    # before that, the option is silently ignored unfortunately
-    assert major >= 19, f"uftrace version should be >= 0.19, found 0.{major}"
-
-
 def copy_sources(sources_dir: str) -> None:
     sources = set()
     for file in os.listdir("uftrace.data"):
@@ -161,8 +148,6 @@ def main() -> None:
         help="base url for sources",
     )
     args = parser.parse_args()
-
-    check_uftrace()
 
     if not os.path.exists("uftrace.data"):
         raise Exception("can't find uftrace folder")
