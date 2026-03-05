@@ -106,12 +106,30 @@ function element_trace(
 }
 
 function find_subtrace(/** @type number */ ts, /** @type Trace */ trace) {
-	for (const subtrace of trace.traces) {
-		if (subtrace.start <= ts && subtrace.end >= ts) {
-			return subtrace;
+	function get_score(/** @type {Subtrace} */ subtrace) {
+		if (ts <= subtrace.start || ts >= subtrace.end) {
+			return 0;
 		}
+
+		const range = subtrace.end - subtrace.start;
+		/*
+		 * Ideal subtrace is a trace centered on current event.
+		 * We compute surface of triangle centered on event for a given
+		 * close_range and substract what is out of current subtrace.
+		 */
+		const close_range = range / 8;
+		const one_side_max_coverage = close_range / 2;
+		const right_not_covered = Math.max(0, ts + close_range - subtrace.end) / 2;
+		const left_not_covered = Math.max(0, subtrace.start - ts - close_range) / 2;
+		return 2 * one_side_max_coverage - right_not_covered - left_not_covered;
 	}
-	return null;
+
+	const scores = trace.traces.map(get_score);
+	const best_score = Math.max(...scores);
+	const best_index = scores.indexOf(best_score);
+	const best_subtrace = trace.traces[best_index];
+	if (!best_subtrace) throw "unreachable: cant find subtrace";
+	return best_subtrace;
 }
 
 function perfetto_url(
