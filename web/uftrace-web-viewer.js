@@ -111,16 +111,15 @@ function find_subtrace(/** @type number */ ts, /** @type Trace */ trace) {
 			return 0;
 		}
 
-		const range = subtrace.end - subtrace.start;
 		/*
 		 * Ideal subtrace is a trace centered on current event.
 		 * We compute surface of triangle centered on event for a given
-		 * close_range and substract what is out of current subtrace.
+		 * range and substract what is out of current subtrace.
 		 */
-		const close_range = range / 8;
-		const one_side_max_coverage = close_range / 2;
-		const right_not_covered = Math.max(0, ts + close_range - subtrace.end) / 2;
-		const left_not_covered = Math.max(0, subtrace.start - ts - close_range) / 2;
+		const range = (subtrace.end - subtrace.start) / 2;
+		const one_side_max_coverage = range / 2;
+		const right_not_covered = Math.max(0, ts + range - subtrace.end) / 2;
+		const left_not_covered = Math.max(0, subtrace.start - (ts - range)) / 2;
 		return 2 * one_side_max_coverage - right_not_covered - left_not_covered;
 	}
 
