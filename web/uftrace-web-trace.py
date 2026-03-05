@@ -50,14 +50,13 @@ def sub_traces(events: list[Event], trace_duration: int) -> list[Subtrace]:
     trace_duration *= NANOSEC_IN_ONE_SEC
     first_timestamp = int(events[0]["ts"])
     last_timestamp = int(events[-1]["ts"])
-    step = int(trace_duration * 0.75)
     offset = int(trace_duration / 2)
-    ts = first_timestamp
+    ts = first_timestamp + offset
     while ts < last_timestamp + offset:
         start = ts - offset
         end = ts + offset
         has_events = False
-        ts += step
+        ts += offset
         for e in events:
             if e["ts"] >= start and e["ts"] <= end:
                 has_events = True
