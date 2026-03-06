@@ -21,7 +21,9 @@ build()
     pushd $(readlink -f u-boot)
     rm -f .config
     make CROSS_COMPILE=aarch64-linux-gnu- qemu_arm64_defconfig
-    scripts/config --set-val BOOTDELAY 1
+    scripts/config --set-val BOOTDELAY 0
+    bootcmd='load virtio 0 0x60000000 /xen.efi; bootefi 0x60000000'
+    scripts/config --set-str CONFIG_BOOTCOMMAND "$bootcmd"
     scripts/config --enable CC_OPTIMIZE_FOR_DEBUG
     intercept-build --append \
     make CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc)

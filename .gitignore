@@ -14,3 +14,4 @@
 /out
 /uftrace.data
 /perfetto
+/xen*
