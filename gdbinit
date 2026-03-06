@@ -24,6 +24,9 @@ b board_init_f
 # relocaddr   = 0x000000023f6b6000
 add-symbol-file ./u-boot/u-boot.relocated 0x000000023f6b6000
 
+add-symbol-file ./xen/xen/xen-syms
+b start_xen
+
 add-symbol-file ./linux/vmlinux
 b start_kernel
 
