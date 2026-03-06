@@ -21,5 +21,5 @@ cp -r /host/out/optee_test/*.ta /lib/optee_armtz
 # run (normal world) app
 /host/out/optee_app/optee_example_hello_world
 
-# run tests
-/host/out/optee_test/xtest -t regression || true
+# run one test
+time /host/out/optee_test/xtest regression_1004
