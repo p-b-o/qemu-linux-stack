@@ -87,7 +87,7 @@ def generate_one_trace(params: typing.Tuple[Subtrace, str]) -> str:
 def generate_traces(traces: list[Subtrace], traces_dir: str) -> None:
     num_workers = multiprocessing.cpu_count()
     num_traces = len(traces)
-    print(f"generate traces in parallel with {num_workers} workers")
+    print(f"generate {num_traces} traces in parallel with {num_workers} workers")
     with multiprocessing.Pool(num_workers) as p:
         traces_ = zip(traces, itertools.repeat(traces_dir))
         for i, cmd in enumerate(p.imap_unordered(generate_one_trace, traces_)):
