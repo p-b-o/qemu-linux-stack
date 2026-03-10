@@ -10,6 +10,7 @@
 /slof*
 /optee*
 /hafnium*
+/xen*
 /out
 /uftrace.data
 /perfetto
