@@ -1,5 +1,6 @@
 on:
   push:
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -8,10 +9,6 @@ concurrency:
 jobs:
   build_and_run:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    env:
-      GITHUB_TOKEN: ${{ secrets.WORKFLOW_RELEASE_TOKEN }}
     steps:
       - run: echo "----- more disk space -----"
       - run: sudo rm -rf /opt/ /usr/local/.ghcup /usr/local/lib/android
@@ -29,7 +26,7 @@ jobs:
       - run: ./archive_artifacts.sh .build.tar.xz
       # delete and restore built files - ensure we are self contained
       - run: rm -rf ./*
-      - run: tar xvf .build.tar.xz
+      - run: mv .build.tar.xz build.tar.xz && tar xvf build.tar.xz
 
       - run: echo "----- build latest QEMU -----"
       - run: sudo sed -i -e "s/ deb$/ deb deb-src/" /etc/apt/sources.list.d/ubuntu.sources
@@ -40,13 +37,37 @@ jobs:
       - run: echo "----- run nested guest and exit -----"
       - run: INIT='env INIT=true /host/host.sh qemu-system-aarch64' timeout 10m ./run.sh ./qemu/build/qemu-system-aarch64
 
-      - run: echo "----- create artifacts ------"
+      - run: echo "----- upload artifact -----"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: build.tar.xz
+          if-no-files-found: error
+
+  tag_and_push_artifact:
+    needs: build_and_run
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'push' && github.event.repository.fork != true
+    permissions:
+      contents: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.WORKFLOW_RELEASE_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: echo "----- download artifact ------"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+
+      - run: echo "----- rename artifacts ------"
       - run: echo $(basename ${{github.ref}}) > branch
       - run: echo $(git rev-parse --short=7 HEAD) > version
-      - run: mv .build.tar.xz $(cat branch)-$(cat version).tar.xz
+      - run: mv build.tar.xz $(cat branch)-$(cat version).tar.xz
 
       - run: echo "----- tag build -----"
       - run: git tag $(cat branch)-$(cat version) && git push --tags
 
       - run: echo "----- push artifacts to "build" release -----"
       - run: gh release upload --clobber build $(cat branch)-$(cat version).tar.xz
+
