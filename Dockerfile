@@ -35,6 +35,11 @@ RUN cd /tmp && git clone https://github.com/p-b-o/uftrace && \
 cd uftrace && git checkout d6d243b67183624b6ad07ab77bf419b08ae4a4bb && \
 ./configure && make -j $(nproc) && make install && rm -rf /tmp/*
 
+RUN apt update && apt install -y libyajl-dev
+RUN cd tmp && git clone https://github.com/p-b-o/chrome2fuchsia && \
+cd chrome2fuchsia && git checkout 07977568bf30fa724f9ed8960918946a29acc7bd && \
+make && mv c2f /usr/bin && rm -rf /tmp/*
+
 RUN apt update && apt install -y black mypy node-typescript
 RUN wget -q https://github.com/biomejs/biome/releases/download/@biomejs/biome@2.4.5/biome-linux-x64 && \
 mv biome-linux-x64 /usr/bin/biome && chmod +x /usr/bin/biome

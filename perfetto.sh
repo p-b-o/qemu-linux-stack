@@ -17,7 +17,7 @@ to=$1;shift
 out=$1;shift
 
 set -x
-uftrace dump --chrome --srcline --time-range=${from}~${to} | pigz > $out
+uftrace dump --chrome --srcline --time-range=${from}~${to} | c2f | pigz > $out
 set +x
 
 du -h $out
