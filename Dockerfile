@@ -28,11 +28,12 @@ RUN ln -s /usr/bin/intercept-build-* /usr/bin/intercept-build
 RUN apt update && apt install -y pigz
 
 # Need recent uftrace, which implements dump --srcline (81fe3b94782)
-# uftrace v0.19 contains the needed changes.
+# As well, needs fix for --time-range (5f347b2)
+# uftrace v0.20 will contain the needed changes.
 RUN sed -e 's/Types: deb/Types: deb deb-src/' -i /etc/apt/sources.list.d/debian.sources
 RUN apt update && apt build-dep -y uftrace
-RUN cd /tmp && git clone https://github.com/p-b-o/uftrace && \
-cd uftrace && git checkout d6d243b67183624b6ad07ab77bf419b08ae4a4bb && \
+RUN cd /tmp && git clone https://github.com/namhyung/uftrace && \
+cd uftrace && git checkout 5f347b2 && \
 ./configure && make -j $(nproc) && make install && rm -rf /tmp/*
 
 RUN apt update && apt install -y libyajl-dev
