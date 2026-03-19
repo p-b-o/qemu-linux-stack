@@ -79,7 +79,7 @@ def generate_one_trace(params: typing.Tuple[Subtrace, str]) -> str:
 
     cmd = f"uftrace dump --chrome --srcline --time-range={start}~{end}"
     cmd += f" | sed -e '{sed_expr}'"
-    cmd += f" | gzip -9 > {path}"
+    cmd += f" | c2f | pigz -9 > {path}"
     subprocess.check_call(["bash", "-euc", "-o", "pipefail", cmd])
     return cmd
 
@@ -133,7 +133,7 @@ def main() -> None:
     parser.add_argument(
         "--trace-duration",
         type=float,
-        default=1,
+        default=5,
         help="duration for one partial trace (seconds)",
     )
     parser.add_argument(

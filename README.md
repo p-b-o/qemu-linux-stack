@@ -72,10 +72,10 @@ In this case, you need to use a QEMU compiled from source and master branch.
 ...
 execution log is available in ./uftrace.data/exec.log
 
-# generate perfetto trace (compressed json) using uftrace
+# generate perfetto trace (compressed fuchsia trace) using uftrace
 from=1760047503.162041
 to=1760047503.163462
-./perfetto.sh $from $to ~/out.json.gz
+./perfetto.sh $from $to ~/out.fxt.gz
 ```
 
 Finally, you can open a web viewer for the full trace, automatically generating
