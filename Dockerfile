@@ -32,7 +32,7 @@ RUN apt update && apt install -y pigz
 RUN sed -e 's/Types: deb/Types: deb deb-src/' -i /etc/apt/sources.list.d/debian.sources
 RUN apt update && apt build-dep -y uftrace
 RUN cd /tmp && git clone https://github.com/p-b-o/uftrace && \
-cd uftrace && git checkout d6d243b67183624b6ad07ab77bf419b08ae4a4bb && \
+cd uftrace && git checkout 58e4f7962096dd33f4d8c25cdbc9d8a08d54475c && \
 ./configure && make -j $(nproc) && make install && rm -rf /tmp/*
 
 RUN apt update && apt install -y libyajl-dev
