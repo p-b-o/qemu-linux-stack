@@ -3,17 +3,19 @@
 set -euo pipefail
 set -x
 
+script_dir=$(dirname $(readlink -f $0))
+
 if [ -z "${DISABLE_CONTAINER_CHECK:-}" ]; then
-    ./container.sh ./uftrace-web-viewer.sh "$@"
+    $script_dir/container.sh $script_dir/uftrace-web-viewer.sh "$@"
     exit 0
 fi
 
-web=$(pwd)/web
+web=$script_dir/web
 data=$(pwd)/uftrace.data/web
 
 if [ ! -d $data ]; then
     trap "rm -rf $data" EXIT
-    ./web/uftrace-web-trace.py "$@"
+    $web/uftrace-web-trace.py "$@"
     trap - EXIT
 fi
 
