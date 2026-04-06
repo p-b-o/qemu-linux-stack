@@ -159,14 +159,14 @@ function perfetto_url(
 		},
 	];
 
+	const main_event_color = "#ff7777";
+	const secondary_events_color = "#dddddd";
+
 	for (const e of trace.events) {
 		if (e.ts < subtrace.start || e.ts > subtrace.end) {
 			continue;
 		}
-		let color = "#dddddd";
-		if (ts === e.ts) {
-			color = "#ff7777";
-		}
+		const color = ts === e.ts ? main_event_color : secondary_events_color;
 		commands.push({
 			id: "dev.perfetto.AddNoteAtTimestamp",
 			args: [e.ts.toString(), e.label, color],
@@ -233,6 +233,22 @@ async function page_event(
 		throw "missing trace_url";
 	}
 	const trace = await fetch_trace(trace_url);
+
+	let event_exists = false;
+	for (const e of trace.events) {
+		if (e.ts === ts) {
+			event_exists = true;
+			break;
+		}
+	}
+	if (!event_exists) {
+		trace.events.push({ ts: ts, label: "..." });
+		trace.events.sort(
+			(/** @type TraceEvent */ a, /** @type TraceEvent */ b) => {
+				return a.ts - b.ts;
+			},
+		);
+	}
 
 	SOURCES_BASE_URL = trace.src_url;
 	if (!SOURCES_BASE_URL.startsWith("http")) {
