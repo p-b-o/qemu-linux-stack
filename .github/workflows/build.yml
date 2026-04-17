@@ -13,7 +13,7 @@ jobs:
       - run: echo "----- more disk space -----"
       - run: sudo rm -rf /opt/ /usr/local/.ghcup /usr/local/lib/android
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: git config --global user.name "GitHub"
       - run: git config --global user.email git@github.com
 
@@ -53,7 +53,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.WORKFLOW_RELEASE_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - run: echo "----- download artifact ------"
       - uses: actions/download-artifact@v4
