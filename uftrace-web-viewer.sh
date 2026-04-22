@@ -42,6 +42,7 @@ pushd $tmp
 set +x
 echo --------------------------------------------------
 echo "Trace available at: http://127.0.0.1:8000/?action=view-trace&trace=./trace.json"
+echo "Trace available at: http://$(hostname):8000/?action=view-trace&trace=./trace.json"
 echo --------------------------------------------------
 python3 -m http.server > /dev/null
 popd
