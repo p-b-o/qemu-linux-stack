@@ -113,7 +113,8 @@ def copy_sources(sources_dir: str) -> None:
     here = os.getcwd()
     print(f"copy sources to {sources_dir}")
     for s in sources:
-        s = os.path.realpath(s)
+        dir = os.path.realpath(os.path.dirname(s))
+        s = os.path.join(dir, os.path.basename(s))
         dest = s.replace(here, sources_dir)
         dest_folder = os.path.dirname(dest)
         if not os.path.exists(dest_folder):
