@@ -14,7 +14,8 @@ clone()
         arm-trusted-firmware \
         https://github.com/ARM-software/arm-trusted-firmware \
         v2.14.0 \
-        patches/arm-trusted-firmware-silentify-error-on-smccc-features-enabled.patch
+        patches/arm-trusted-firmware-silentify-error-on-smccc-features-enabled.patch \
+        patches/arm-trusted-firmware-enable-fpmr.patch
 }
 
 build()
