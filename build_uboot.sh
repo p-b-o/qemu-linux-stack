@@ -27,7 +27,7 @@ build()
     make CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc)
     # duplicate elf to load it twice with gdb
     cp u-boot u-boot.relocated
-    sed -i compile_commands.json -e 's/"cc"/"aarch64-linux-gnu-gcc"/'
+    sed -i compile_commands.json -e 's/"cc/"aarch64-linux-gnu-gcc/'
     popd
 }
 

@@ -29,7 +29,7 @@ build()
          all fip -j$(nproc)
     dd if=build/qemu/debug/bl1.bin of=flash.bin bs=4096 conv=notrunc
     dd if=build/qemu/debug/fip.bin of=flash.bin seek=64 bs=4096 conv=notrunc
-    sed -i compile_commands.json -e 's/"cc"/"aarch64-linux-gnu-gcc"/'
+    sed -i compile_commands.json -e 's/"cc/"aarch64-linux-gnu-gcc/'
     popd
 }
 
