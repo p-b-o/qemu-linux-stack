@@ -5,7 +5,7 @@ set -euo pipefail
 cd /host
 
 if [ $# -lt 1 ]; then
-    echo "usage: qemu_aarch64_cmd"
+    echo "usage: qemu_hexagon_cmd"
     exit 1
 fi
 
