@@ -1,0 +1,44 @@
+From 218a33914caf79f2aea52f26e66f493c3b8692d7 Mon Sep 17 00:00:00 2001
+From: Brian Cain <brian.cain@oss.qualcomm.com>
+Date: Mon, 1 Jun 2026 20:19:05 -0700
+Subject: [PATCH 3/4] h2: boot: initialize SHIFT and TCM_VAL to zero on
+ non-multicore path
+
+When MULTICORE is defined but CORE_COUNT == 0 (single-core hardware, as
+on the QEMU virt machine), boot.ref.S jumps directly to .Lno_multicore
+without executing the multicore core-synchronization block that sets SHIFT
+(r15) and TCM_VAL (r7).  These registers are subsequently passed to
+H2K_thread_boot() as the multicore_shift and tcm_offset arguments.
+
+With SHIFT uninitialized, H2K_kg_init() computes a garbage phys_offset
+(H2K_LINK_ADDR - garbage_shift - H2K_LOAD_ADDR), corrupting the H2 kernel
+address-space setup and causing silent boot failures.
+
+Initialize SHIFT = #0 and TCM_VAL = #0 at .Lno_multicore so the
+single-core path always passes correct zero values to H2K_thread_boot().
+
+Signed-off-by: Brian Cain <brian.cain@oss.qualcomm.com>
+---
+ kernel/init/boot/boot.ref.S | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/init/boot/boot.ref.S b/kernel/init/boot/boot.ref.S
+index 0971af5..d57fa2f 100644
+--- a/kernel/init/boot/boot.ref.S
++++ b/kernel/init/boot/boot.ref.S
+@@ -366,8 +366,11 @@ boot_continuation:
+ 	isync
+ 
+ .Lno_multicore:
++	/* Single-core or non-multicore path: initialize shift/TCM to zero */
++	SHIFT = #0
++	TCM_VAL = #0
+ #endif
+-	
++
+ 	/* Setup EVB */
+ 	SETCONST(TMP,H2K_event_vectors)
+ 	evb = TMP
+-- 
+2.43.0
+
