@@ -12,8 +12,8 @@ clone()
 {
     ./clone.sh \
         linux \
-        https://github.com/torvalds/linux \
-        v6.17 \
+        https://git.kernel.org/pub/scm/linux/kernel/git/bcain/linux.git \
+        bcain/boot_qemu \
         patches/linux-include-linux-compiler-add-DEBUGGER-attribute-for-functions.patch
 }
 
@@ -21,37 +21,29 @@ build()
 {
     export CC_NO_DEBUG_MACROS=1
 
+    flags="ARCH=hexagon CC=hexagon-unknown-linux-musl-clang LLVM=1 LLVM_IAS=1 HOSTCC=gcc"
     pushd $(readlink -f linux)
     rm -f .config
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig -j$(nproc)
-    # reduce number of timer interrupts
-    scripts/config --disable CONFIG_HZ_250
-    scripts/config --enable CONFIG_HZ_100
-    # nvme
-    scripts/config --enable BLK_DEV_NVME
-    # iommufd
-    # https://docs.kernel.org/driver-api/vfio.html#vfio-device-cdev
-    scripts/config --enable IOMMUFD
-    scripts/config --enable VFIO_DEVICE_CDEV
-    scripts/config --enable ARM_SMMU_V3_IOMMUFD
-    # speed up boot by disabling ftrace
-    scripts/config --disable CONFIG_FTRACE
+    make $flags qemu_defconfig -j$(nproc)
 
-    # disable all modules
+    if [ ! -f rootfs.cpio ]; then
+        wget https://artifacts.codelinaro.org/artifactory/codelinaro-toolchain-for-hexagon/22.1.4_/rootfs.cpio -O dl
+        mv dl rootfs.cpio
+    fi
+
+    ./scripts/config --set-str CONFIG_INITRAMFS_SOURCE $(pwd)/../rootfs/rootfs.cpio
+    ./scripts/config --enable CONFIG_INITRAMFS_COMPRESSION_NONE
+
+    ## disable all modules
     sed -i -e 's/=m$/=n/' .config
 
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- olddefconfig -j$(nproc)
-    make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- all -j$(nproc)
+    make $flags olddefconfig -j$(nproc)
+    make $flags vmlinux -j$(nproc)
+
+    llvm-objcopy -O binary vmlinux vmlinux.bin
 
     # compile commands
     ./scripts/clang-tools/gen_compile_commands.py
-    sed -i ./compile_commands.json \
-        -e 's/-femit-struct-debug-baseonly//' \
-        -e 's/-fconserve-stack//' \
-        -e 's/-fno-allow-store-data-races//' \
-        -e 's/-mabi=lp64//' \
-        -e 's/aarch64-linux-gnu-gcc/clang -target aarch64-pc-none-gnu -Wno-unknown-warning-option -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang/'
-
     popd
 
     unset CC_NO_DEBUG_MACROS
@@ -60,7 +52,7 @@ build()
 output()
 {
     mkdir -p out
-    rsync ./linux/arch/arm64/boot/Image.gz out/
+    rsync ./linux/vmlinux.bin out/vmlinux.bin
 }
 
 clone

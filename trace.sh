@@ -36,7 +36,9 @@ fi
 
 get_binaries()
 {
-    cat gdbinit | grep '^add-symbol-file' | sed -e 's/add-symbol-file\s*//' |
+    cat lldbinit | grep '^target modules load --file' |
+    sed -e 's/target modules load --file\s*//' |
+    sed -e 's/--slide\s*//' |
     while read line; do
         line="$line "
         path=$(echo "$line" | cut -f 1 -d ' ')

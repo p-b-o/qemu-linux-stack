@@ -1,0 +1,36 @@
+From 9db5a72ce6914139e2a3d9e6a041053e1202cf22 Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@oss.qualcomm.com>
+Date: Wed, 24 Jun 2026 19:59:10 +0000
+Subject: [PATCH] Revert "Restore polling in angel trap."
+
+This reverts commit 616732e6cd452530e15635316ad299e4f924e12e.
+---
+ kernel/traps/angel/angel.ref.S | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/kernel/traps/angel/angel.ref.S b/kernel/traps/angel/angel.ref.S
+index 88f42874..7d953513 100644
+--- a/kernel/traps/angel/angel.ref.S
++++ b/kernel/traps/angel/angel.ref.S
+@@ -52,17 +52,12 @@ FUNC_START H2K_trap_angel .text.trap.angel .p2align 2
+ 	r8 = memub(r6+#15)
+ 	dccleaninva(r6)
+ 
+-.Lpoll:
+-	loop0(.Lwait,#66)  // FIXME: what is the proper value here? Maybe remove this loop.
++	loop0(.Lwait,#66)
+ 	.falign
+ .Lwait:
+ 	{ nop }:endloop0
+ 
+-	dccleaninva(r6)
+ 	r8 = memw(r6+#12)
+-	p0 = cmp.eq(r8, #0)
+-	if (!p0) jump .Lpoll	
+-
+ 	dccleaninva(r6)
+ 	r11:10 = memd(r6+#0)
+ 
+-- 
+2.43.0
+

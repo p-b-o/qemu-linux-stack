@@ -1,0 +1,10 @@
+target create --arch hexagon h2/linux/loadlinux
+target modules add h2/linux/loadlinux
+target modules load --file h2/linux/loadlinux --slide 0x0
+target modules add linux/vmlinux
+target modules load --file linux/vmlinux --slide 0x0
+target module add h2/linux/bootvm_image
+target module load --file h2/linux/bootvm_image --slide 0x0
+gdb-remote localhost:1234
+b bootvm_image`main
+b vmlinux`start_kernel

@@ -9,6 +9,7 @@
 /opensbi*
 /slof*
 /optee*
+/h2*
 /hafnium*
 /xen*
 /out
