@@ -31,9 +31,6 @@ build()
         mv dl rootfs.cpio
     fi
 
-    ./scripts/config --set-str CONFIG_INITRAMFS_SOURCE $(pwd)/../rootfs/rootfs.cpio
-    ./scripts/config --enable CONFIG_INITRAMFS_COMPRESSION_NONE
-
     ## disable all modules
     sed -i -e 's/=m$/=n/' .config
 
