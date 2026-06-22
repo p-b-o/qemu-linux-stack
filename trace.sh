@@ -9,6 +9,7 @@ fi
 
 qemu_bin=$(readlink -f $1)
 qemu_src_dir=$(dirname $qemu_bin)/../
+script_dir=$(dirname $(readlink -f $0))
 
 uftrace_plugin=$qemu_src_dir/build/contrib/plugins/libuftrace.so
 uftrace_symbols=$qemu_src_dir/contrib/plugins/uftrace_symbols.py
@@ -53,7 +54,7 @@ binaries=$(get_binaries)
 
 set -x
 rm -rf ./uftrace.data
-./container.sh $uftrace_symbols --prefix-symbols $binaries
+$script_dir/container.sh $uftrace_symbols --prefix-symbols $binaries
 
 qemu_cmd=$*
 ./run.sh $qemu_cmd -plugin $uftrace_plugin,trace-privilege-level=on |&
