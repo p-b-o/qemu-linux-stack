@@ -10,7 +10,7 @@ timeout 3 podman build -q -t build-linux-stack - < $script_dir/Dockerfile ||
 
 tty=-t
 [ -v CONTAINER_NO_TTY ] && tty=
-podman run \
+exec podman run \
     -i $tty --rm \
     -v $script_dir:$script_dir \
     -v $(pwd):$(pwd) \

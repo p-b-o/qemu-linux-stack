@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // https://github.com/llvm/vscode-lldb
+            "type": "lldb-dap",
+            "request": "attach",
+            "name": "Debug",
+            "stopOnEntry": true,
+            // Start debug with: ./vscode_debug.sh /path/to/qemu
+            "debugAdapterPort": 4711,
+            "debugAdapterHostname": "localhost",
+            "attachCommands": ["command source ./lldbinit"]
+        }
+    ]
+}

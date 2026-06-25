@@ -34,6 +34,10 @@ Thus, update or switch branches should not require any ``git clean -ffdx``.
 # debug kernel, firmwares and bootloader using:
 ./debug.sh /path/to/qemu-system-aarch64
 
+# debug from VS Code. Open current folder, install recommended extensions, then run:
+./vscode_debug.sh /path/to/qemu-system-aarch64
+# Then attach to QEMU using F5
+
 # to debug qemu itself:
 ./run.sh gdb --args /path/to/qemu-system-aarch64
 
