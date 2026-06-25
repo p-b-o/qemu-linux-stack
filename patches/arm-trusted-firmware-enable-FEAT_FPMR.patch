@@ -1,0 +1,26 @@
+From 457883e4d9fa1dc5ecf39d81b9fb133929de0800 Mon Sep 17 00:00:00 2001
+From: Pierrick Bouvier <pierrick.bouvier@oss.qualcomm.com>
+Date: Thu, 25 Jun 2026 15:06:34 -0700
+Subject: [PATCH] qemu: enable FEAT_FPMR
+
+---
+ plat/qemu/common/common.mk | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/plat/qemu/common/common.mk b/plat/qemu/common/common.mk
+index aca1259..cde024c 100644
+--- a/plat/qemu/common/common.mk
++++ b/plat/qemu/common/common.mk
+@@ -131,6 +131,9 @@ ENABLE_FEAT_S1POE	:=	2
+ # 9.3
+ ENABLE_FEAT_GCS		:=	2
+ 
++# 9.5
++ENABLE_FEAT_FPMR	:=	2
++
+ # SPM_MM is not compatible with ENABLE_SVE_FOR_NS (build breaks)
+ ifeq (${SPM_MM},1)
+ 	ENABLE_SVE_FOR_NS	:= 0
+-- 
+2.43.0
+
