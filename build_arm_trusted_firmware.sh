@@ -13,7 +13,7 @@ clone()
     ./clone.sh \
         arm-trusted-firmware \
         https://github.com/ARM-software/arm-trusted-firmware \
-        v2.14.0 \
+        v2.15.0 \
         patches/arm-trusted-firmware-enable-FEAT_FPMR.patch
 }
 
