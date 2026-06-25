@@ -1,3 +1,5 @@
+settings set interpreter.prompt-on-quit false
+
 gdb-remote localhost:1234
 
 target modules add arm-trusted-firmware/build/qemu/debug/bl1/bl1.elf

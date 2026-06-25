@@ -1,0 +1,16 @@
+command source ./lldbinit
+
+b vmlinux`sys_off_notify
+
+# bl1.elf`bl1_main
+c
+# bl2.elf`bl2_main
+c
+# bl31.elf`bl31_main
+c
+# u-boot`board_init_f
+c
+# vmlinux`start_kernel
+c
+# vmlinux`sys_off_notify
+q

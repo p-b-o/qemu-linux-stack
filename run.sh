@@ -11,7 +11,7 @@ set -x
 
 [ -v INIT ] || INIT=
 
-"$@" \
+exec "$@" \
 -nodefaults \
 -display none \
 -serial mon:stdio \
