@@ -33,7 +33,6 @@ Thus, update or switch branches should not require any ``git clean -ffdx``.
 
 # debug kernel, firmwares and bootloader using:
 ./debug.sh /path/to/qemu-system-aarch64
-# additional gdb commands were added, like arm-exception-level. See gdb.py.
 
 # to debug qemu itself:
 ./run.sh gdb --args /path/to/qemu-system-aarch64

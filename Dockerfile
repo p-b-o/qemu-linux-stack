@@ -47,6 +47,10 @@ RUN apt update && apt install -y black mypy node-typescript
 RUN wget -q https://github.com/biomejs/biome/releases/download/@biomejs/biome@2.4.5/biome-linux-x64 && \
 mv biome-linux-x64 /usr/bin/biome && chmod +x /usr/bin/biome
 
+RUN wget -q https://apt.llvm.org/llvm-snapshot.gpg.key -O /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+RUN echo "deb http://apt.llvm.org/trixie/ llvm-toolchain-trixie-22 main" >> /etc/apt/sources.list
+RUN apt update && apt install -y lldb-22
+
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
 RUN mkdir /opt/compiler_wrappers && \
     for c in gcc g++ aarch64-linux-gnu-gcc aarch64-linux-gnu-g++; do \

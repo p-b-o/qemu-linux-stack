@@ -1,0 +1,33 @@
+gdb-remote localhost:1234
+
+target modules add arm-trusted-firmware/build/qemu/debug/bl1/bl1.elf
+target modules load --file arm-trusted-firmware/build/qemu/debug/bl1/bl1.elf --slide 0x0
+
+target modules add arm-trusted-firmware/build/qemu/debug/bl2/bl2.elf
+target modules load --file arm-trusted-firmware/build/qemu/debug/bl2/bl2.elf --slide 0x0
+
+target modules add arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf
+target modules load --file arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf --slide 0x0
+
+# uboot map offset is given by TF-A during the boot:
+# INFO:    BL31: Preparing for EL3 exit to normal world
+# INFO:    Entry point address = 0x60000000
+target modules add u-boot/u-boot
+target modules load --file u-boot/u-boot --slide 0x60000000
+
+# https://github.com/u-boot/u-boot/blob/master/doc/README.arm-relocation
+# => bdinfo
+# relocaddr   = 0x000000023f6b6000
+target modules add u-boot/u-boot.relocated
+target modules load --file u-boot/u-boot.relocated --slide 0x000000023f6b6000
+
+target modules add linux/vmlinux
+target modules load --file linux/vmlinux --slide 0x0
+
+b bl1.elf`bl1_main
+b bl2.elf`bl2_main
+b bl31.elf`bl31_main
+b u-boot`board_init_f
+b vmlinux`start_kernel
+
+c
