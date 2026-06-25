@@ -31,8 +31,9 @@ Thus, update or switch branches should not require any ``git clean -ffdx``.
 ./run.sh /path/to/qemu-system-aarch64
 # exit QEMU with ctrl-a + x
 
-# debug kernel, firmwares and bootloader using:
+# debug kernel, firmwares and bootloader using lldb:
 ./debug.sh /path/to/qemu-system-aarch64
+# use 'gui' command to display source code
 
 # debug from VS Code. Open current folder, install recommended extensions, then run:
 ./vscode_debug.sh /path/to/qemu-system-aarch64
