@@ -17,6 +17,9 @@ jobs:
       - run: git config --global user.name "GitHub"
       - run: git config --global user.email git@github.com
 
+      - run: echo "----- container -----"
+      - run: ./container.sh true
+
       - run: echo "----- web -----"
       - run: ./web/check.sh
 
