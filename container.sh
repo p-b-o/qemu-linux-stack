@@ -4,9 +4,12 @@ set -euo pipefail
 
 script_dir=$(dirname $(readlink -f $0))
 
-# build silently for 3 seconds, and restart if needed
-timeout 3 podman build -q -t build-linux-stack - < $script_dir/Dockerfile ||
-    podman build -t build-linux-stack - < $script_dir/Dockerfile
+context_hash=$(sha1sum $script_dir/Dockerfile | cut -f 1 -d ' ')
+image=build-linux-stack-$context_hash
+if ! podman image exists $image; then
+    podman build -t $image -f $script_dir/Dockerfile
+fi
+podman tag $image build-linux-stack
 
 tty=-t
 [ -v CONTAINER_NO_TTY ] && tty=
