@@ -11,6 +11,7 @@
 /optee*
 /hafnium*
 /xen*
+/h2*
 /out
 /uftrace.data
 /perfetto
