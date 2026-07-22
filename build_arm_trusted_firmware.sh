@@ -17,27 +17,21 @@ clone()
         patches/arm-trusted-firmware-enable-FEAT_FPMR.patch
 }
 
+
 build()
 {
     pushd $(readlink -f arm-trusted-firmware)
+    optee_bin=../optee-os/out/arm-plat-vexpress/core/
     # tf-a is not very good to handle config changes, so simply clean it
     git clean -ffdx
     intercept-build --append \
-    make PLAT=qemu QEMU_USE_GIC_DRIVER=QEMU_GICV3 \
-         SPD=spmd \
-         ENABLE_FEAT_SEL2=1 \
-         SP_LAYOUT_FILE=../optee-build/qemu_v8/sp_layout.json \
-         NEED_FDT=yes \
+    make PLAT=qemu \
+         SPD=opteed \
+         BL32=$optee_bin/tee-header_v2.bin \
+         BL32_EXTRA1=$optee_bin/tee-pager_v2.bin \
+         BL32_EXTRA2=$optee_bin/tee-pageable_v2.bin \
          BL32_RAM_LOCATION=tdram \
-         ENABLE_FEAT_MTE2=2 \
-         BRANCH_PROTECTION=1 \
-         ENABLE_SME_FOR_NS=2 ENABLE_SME_FOR_SWD=1 \
-         ENABLE_SVE_FOR_NS=2 ENABLE_SVE_FOR_SWD=1 \
-         ENABLE_FEAT_FGT=2 ENABLE_FEAT_HCX=2 ENABLE_FEAT_ECV=2 \
-         BL32=../hafnium/out/reference/secure_qemu_aarch64_clang/hafnium.bin \
          BL33=../u-boot/u-boot.bin \
-         QEMU_TOS_FW_CONFIG_DTS=../optee-build/qemu_v8/spmc_el2_manifest.dts \
-         QEMU_TB_FW_CONFIG_DTS=../optee-build/qemu_v8/tb_fw_config.dts \
          LOG_LEVEL=40 \
          DEBUG=1 \
          all fip -j$(nproc)

@@ -36,8 +36,6 @@ build()
     scripts/config --enable ARM_SMMU_V3_IOMMUFD
     # speed up boot by disabling ftrace
     scripts/config --disable CONFIG_FTRACE
-    # enable FFA transport to allow communication with optee
-    scripts/config --enable ARM_FFA_TRANSPORT
     scripts/config --enable TEE
     scripts/config --enable OPTEE
 
