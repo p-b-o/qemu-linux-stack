@@ -31,5 +31,6 @@ b bl2.elf`bl2_main
 b bl31.elf`bl31_main
 b u-boot`board_init_f
 b vmlinux`start_kernel
+b vmlinux`sys_off_notify
 
 c

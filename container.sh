@@ -17,6 +17,7 @@ exec podman run \
     -i $tty --rm \
     -v $script_dir:$script_dir \
     -v $(pwd):$(pwd) \
+    -v /tmp:/tmp \
     -w $(pwd) -v $HOME:$HOME -e HOME=$HOME \
     --init \
     --network host \
