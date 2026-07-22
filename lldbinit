@@ -11,9 +11,6 @@ target modules load --file arm-trusted-firmware/build/qemu/debug/bl2/bl2.elf --s
 target modules add arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf
 target modules load --file arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf --slide 0x0
 
-target modules add hafnium/out/reference/secure_qemu_aarch64_clang/hafnium.elf
-target modules load --file hafnium/out/reference/secure_qemu_aarch64_clang/hafnium.elf --slide 0x0
-
 # uboot map offset is given by TF-A during the boot:
 # INFO:    BL31: Preparing for EL3 exit to normal world
 # INFO:    Entry point address = 0x60000000
@@ -35,7 +32,6 @@ target modules load --file linux/vmlinux --slide 0x0
 b bl1.elf`bl1_main
 b bl2.elf`bl2_main
 b bl31.elf`bl31_main
-b hafnium.elf`image_entry
 b tee.elf`__text_start
 b u-boot`board_init_f
 b vmlinux`start_kernel
