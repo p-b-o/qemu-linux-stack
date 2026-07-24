@@ -21,7 +21,8 @@ exec podman run \
     -w $(pwd) -v $HOME:$HOME -e HOME=$HOME \
     --ulimit=nofile=65536:65536 \
     --init \
-    --network host \
+    --publish=127.0.0.1:4711:4711 \
+    --publish=127.0.0.1:8000:8000 \
     --privileged \
     -e DISABLE_CONTAINER_CHECK=1 \
     build-linux-stack \

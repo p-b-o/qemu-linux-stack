@@ -9,7 +9,8 @@
             "stopOnEntry": true,
             // Start debug with: ./vscode_debug.sh /path/to/qemu
             "debugAdapterPort": 4711,
-            "debugAdapterHostname": "localhost",
+            "debugAdapterHostname": "0.0.0.0",
+            "gdb-remote-host": "host.containers.internal",
             "attachCommands": ["command source ./lldbinit"]
         }
     ]

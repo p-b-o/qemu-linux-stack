@@ -14,7 +14,7 @@ echo "Exit QEMU with Ctrl-a + x"
 echo "Press F5 in VS Code to start debugging"
 echo "---------------------------------------------------------"
 
-env CONTAINER_NO_TTY=1 ./container.sh lldb-dap-22 --connection listen://127.0.0.1:4711 &
+env CONTAINER_NO_TTY=1 ./container.sh lldb-dap-22 --connection listen://host.containers.internal:4711 &
 lldb_dap_pid=$!
 trap "kill $lldb_dap_pid" EXIT
 
