@@ -7,11 +7,14 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
+dso_suf=so
+[ "$(uname -s)" = "Darwin" ] && dso_suf=dylib
+
 qemu_bin=$(readlink -f $1)
 qemu_src_dir=$(dirname $qemu_bin)/../
 script_dir=$(dirname $(readlink -f $0))
 
-uftrace_plugin=$qemu_src_dir/build/contrib/plugins/libuftrace.so
+uftrace_plugin=$qemu_src_dir/build/contrib/plugins/libuftrace.$dso_suf
 uftrace_symbols=$qemu_src_dir/contrib/plugins/uftrace_symbols.py
 
 if [ -z "$(which tee)" ]; then
