@@ -11,13 +11,6 @@ set -x
 
 [ -v INIT ] || INIT='/host/host.sh'
 
-mkdir -p out/boot
-trap "rm -rf out/boot" EXIT
-echo "bootargs=nokaslr root=/dev/vda rw init=/init -- $INIT" > out/boot/cmdline
-
-# optee-os will generate a dtb overlay, and thus, we need to manually apply it
-# from u-boot, and boot kernel by hand. Thus why we load kernel and cmdline
-# using device loader.
 exec "$@" \
 -nodefaults \
 -display none \
@@ -30,8 +23,7 @@ exec "$@" \
 -smp 1 \
 -m 8G \
 -bios ./out/flash.bin \
--device 'loader,file=out/Image.gz,addr=0x40400000' \
--device 'loader,file=out/boot/cmdline,addr=0x40300000' \
+-kernel ./out/Image.gz \
 -drive format=raw,file=./out/host.ext4,if=virtio \
--drive format=raw,file=fat:rw:out/boot \
+-append "nokaslr root=/dev/vda rw init=/init -- $INIT" \
 -virtfs local,path=$(pwd)/,mount_tag=host,security_model=mapped,readonly=off
