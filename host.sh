@@ -6,6 +6,8 @@ cd /host
 
 set -x
 
+#fdtdump /sys/firmware/fdt
+
 # check optee is available
 dmesg | grep -i optee
 ls /dev/tee*
