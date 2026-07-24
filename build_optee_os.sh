@@ -25,8 +25,6 @@ build()
     PLATFORM=vexpress-qemu_armv8a \
     DEBUG=1 \
     CFG_ARM64_core=y \
-    CFG_EXTERNAL_DTB_OVERLAY=y \
-    CFG_DT_ADDR=0x40004000 \
     CFG_SHMEM_START=0x60800000 \
     CFG_SHMEM_SIZE=0x00200000 \
     CFG_USER_TA_TARGETS=ta_arm64 \
