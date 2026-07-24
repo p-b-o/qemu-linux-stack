@@ -25,8 +25,8 @@ build()
     rm -f .config
     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig -j$(nproc)
     # reduce number of timer interrupts
-    scripts/config --disable CONFIG_HZ_250
-    scripts/config --enable CONFIG_HZ_100
+    scripts/config --disable HZ_250
+    scripts/config --enable HZ_100
     # nvme
     scripts/config --enable BLK_DEV_NVME
     # iommufd
@@ -35,7 +35,7 @@ build()
     scripts/config --enable VFIO_DEVICE_CDEV
     scripts/config --enable ARM_SMMU_V3_IOMMUFD
     # speed up boot by disabling ftrace
-    scripts/config --disable CONFIG_FTRACE
+    scripts/config --disable FTRACE
 
     # disable all modules
     sed -i -e 's/=m$/=n/' .config
