@@ -30,7 +30,6 @@ build()
          BL32=$optee_bin/tee-header_v2.bin \
          BL32_EXTRA1=$optee_bin/tee-pager_v2.bin \
          BL32_EXTRA2=$optee_bin/tee-pageable_v2.bin \
-         BL32_RAM_LOCATION=tdram \
          BL33=../u-boot/u-boot.bin \
          LOG_LEVEL=40 \
          DEBUG=1 \
