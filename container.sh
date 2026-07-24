@@ -7,7 +7,7 @@ script_dir=$(dirname $(readlink -f $0))
 context_hash=$(sha1sum $script_dir/Dockerfile | cut -f 1 -d ' ')
 image=build-linux-stack-$context_hash
 if ! podman image exists $image; then
-    podman build -t $image -f $script_dir/Dockerfile
+    podman build --ulimit=nofile=65536:65536 -t $image -f $script_dir/Dockerfile
 fi
 podman tag $image build-linux-stack
 
@@ -19,6 +19,7 @@ exec podman run \
     -v $(pwd):$(pwd) \
     -v /tmp:/tmp \
     -w $(pwd) -v $HOME:$HOME -e HOME=$HOME \
+    --ulimit=nofile=65536:65536 \
     --init \
     --network host \
     --privileged \
