@@ -96,6 +96,19 @@ def generate_traces(traces: list[Subtrace], traces_dir: str) -> None:
             print(f"[{i + 1}/{num_traces}] {cmd}")
 
 
+def copy_one_source(s: str, sources_dir: str) -> None:
+    here = os.getcwd()
+    dir = os.path.abspath(os.path.dirname(s))
+    if s.startswith(here):
+        dest = s.replace(here, sources_dir)
+    else:
+        dest = sources_dir + '/' + s
+    dest_folder = os.path.dirname(dest)
+    if not os.path.exists(dest_folder):
+        os.makedirs(dest_folder)
+    shutil.copyfile(s, dest)
+
+
 def copy_sources(sources_dir: str) -> None:
     sources = set()
     for file in os.listdir("uftrace.data"):
@@ -110,16 +123,14 @@ def copy_sources(sources_dir: str) -> None:
                 source = line[-1]
                 if os.path.exists(source):
                     sources.add(source)
-    here = os.getcwd()
     print(f"copy sources to {sources_dir}")
     for s in sources:
-        dir = os.path.realpath(os.path.dirname(s))
-        s = os.path.join(dir, os.path.basename(s))
-        dest = s.replace(here, sources_dir)
-        dest_folder = os.path.dirname(dest)
-        if not os.path.exists(dest_folder):
-            os.makedirs(dest_folder)
-        shutil.copyfile(s, dest)
+        abs_s = os.path.abspath(s)
+        real_s = os.path.realpath(s)
+        copy_one_source(abs_s, sources_dir)
+        # source can be on a symlink
+        if abs_s != real_s:
+            copy_one_source(real_s, sources_dir)
 
 
 def main() -> None:
