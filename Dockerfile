@@ -31,11 +31,10 @@ RUN apt update && apt install -y pigz
 # - dump --srcline (81fe3b94782)
 # - fix for --time-range (5f347b2)
 # - add realtime clock option for using with uftrace record (f57c29f)
-# uftrace v0.20 will contain the needed changes.
 RUN sed -e 's/Types: deb/Types: deb deb-src/' -i /etc/apt/sources.list.d/debian.sources
 RUN apt update && apt build-dep -y uftrace
 RUN cd /tmp && git clone https://github.com/namhyung/uftrace && \
-cd uftrace && git checkout f57c29f && \
+cd uftrace && git checkout v0.20 && \
 ./configure && make -j $(nproc) && make install && rm -rf /tmp/*
 
 RUN apt update && apt install -y libyajl-dev

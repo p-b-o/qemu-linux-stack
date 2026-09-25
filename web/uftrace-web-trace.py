@@ -79,7 +79,7 @@ def generate_one_trace(params: typing.Tuple[Subtrace, str]) -> str:
 
     # replace srcline to remove absolute path, convert chrome to fuchsia
     # trace and compress trace
-    cmd = f"uftrace dump --chrome --srcline --time-range={start}~{end}"
+    cmd = f"uftrace dump --format=chrome --srcline --time-range={start}~{end}"
     cmd += f" | sed -e '{sed_expr}'"
     cmd += f" | c2f | pigz -9 > {path}"
     subprocess.check_call(["bash", "-euc", "-o", "pipefail", cmd])
