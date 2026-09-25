@@ -7,8 +7,10 @@ if [ $# -ne 3 ]; then
     exit 1
 fi
 
+script_dir=$(dirname $(readlink -f $0))
+
 if [ -z "${DISABLE_CONTAINER_CHECK:-}" ]; then
-    ./container.sh ./perfetto.sh "$@"
+    $script_dir/container.sh $script_dir/perfetto.sh "$@"
     exit 0
 fi
 
