@@ -20,9 +20,6 @@ jobs:
       - run: echo "----- container -----"
       - run: ./container.sh true
 
-      - run: echo "----- web -----"
-      - run: ./web/check.sh
-
       - run: echo "----- build stack -----"
       - run: sudo apt update && sudo apt install -y podman qemu-user-static
       - run: ./build.sh
@@ -40,7 +37,8 @@ jobs:
       - run: echo "----- check trace -----"
       - run: sudo apt update && sudo apt install -y moreutils
       - run: timeout 10m env INIT=true ./trace.sh ./.qemu/build/qemu-system-aarch64
-      - run: ./container.sh ./web/uftrace-web-trace.py
+      - run: ./perfetto.sh 0 9999999999999999999 /dev/null # clone uftrace-web-viewer
+      - run: ./uftrace-web-viewer/gen-web.sh
 
       - run: echo "----- run nested guest and exit -----"
       - run: echo "delete and restore built files - ensure we are self contained"

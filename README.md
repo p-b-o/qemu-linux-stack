@@ -88,3 +88,7 @@ partial perfetto traces using:
 ```
 ./uftrace-web-viewer.sh
 ```
+
+`perfetto.sh` and `uftrace-web-viewer.sh` are provided by
+[uftrace-web-viewer](https://github.com/p-b-o/uftrace-web-viewer), which is
+cloned automatically.
