@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - run: echo "----- more disk space -----"
-      - run: sudo rm -rf /opt/ /usr/local/.ghcup /usr/local/lib/android
+      - run: sudo rm -rf /opt/ghc /usr/local/.ghcup /usr/local/lib/android
 
       - uses: actions/checkout@v6
       - run: git config --global user.name "GitHub"
