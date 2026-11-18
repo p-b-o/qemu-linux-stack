@@ -26,7 +26,7 @@ RUN apt update && apt install -y ccache
 RUN apt update && apt install -y clang-tools
 RUN ln -s /usr/bin/intercept-build-* /usr/bin/intercept-build
 
-ENV LLVM_VERSION=22
+ENV LLVM_VERSION=23
 RUN wget -q https://apt.llvm.org/llvm-snapshot.gpg.key -O /etc/apt/trusted.gpg.d/apt.llvm.org.asc
 RUN echo "deb http://apt.llvm.org/trixie/ llvm-toolchain-trixie-${LLVM_VERSION} main" >> /etc/apt/sources.list
 RUN apt update && apt install -y lldb-${LLVM_VERSION} llvm-${LLVM_VERSION}
