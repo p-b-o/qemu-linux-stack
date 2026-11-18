@@ -33,7 +33,7 @@ EOF
 done
 echo "q" >> $lldbtest
 
-./container.sh lldb-22 -S $lldbtest |& tee $output
+./container.sh lldb -S $lldbtest |& tee $output
 trap - EXIT
 wait $qemu_pid
 

@@ -32,6 +32,8 @@ RUN echo "deb http://apt.llvm.org/trixie/ llvm-toolchain-trixie-${LLVM_VERSION} 
 RUN apt update && apt install -y lldb-${LLVM_VERSION} llvm-${LLVM_VERSION}
 RUN ln -sf /usr/bin/llvm-nm-${LLVM_VERSION} /usr/bin/nm
 RUN ln -sf /usr/bin/llvm-addr2line-${LLVM_VERSION} /usr/bin/addr2line
+RUN ln -sf /usr/bin/lldb-${LLVM_VERSION} /usr/bin/lldb
+RUN ln -sf /usr/bin/lldb-dap-${LLVM_VERSION} /usr/bin/lldb-dap
 
 # wrap compilers to call ccache, keep frame pointer, and enable debug info
 RUN mkdir /opt/compiler_wrappers && \
