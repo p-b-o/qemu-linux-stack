@@ -59,7 +59,7 @@ if [ ! -d $src ]; then
     popd
 
     for patch in $patches; do
-        git -C $src.tmp am $(readlink -f $patch)
+        git -C $src.tmp am --ignore-whitespace $(readlink -f $patch)
     done
 
     pushd $src.tmp
